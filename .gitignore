@@ -1,0 +1,30 @@
+*.class
+*.log
+
+# sbt specific
+.cache
+.history
+.lib/
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# Scala-IDE specific
+.scala_dependencies
+.worksheet
+
+# Other
+.java-version
+scm-source.json
+.ensime
+.ensime_cache/
+.idea/
+__pycache__/
+*.pyc
+
+# Stups
+user.json
+client.json

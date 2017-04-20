@@ -1,0 +1,36 @@
+version: '2'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+
+  kafka:
+    image: wurstmeister/kafka:0.10.0.1
+    hostname: kafka
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_CREATE_TOPICS: "test-0:1:1,test-1:1:1"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    ports:
+      - "9092:9092"
+      - "2181:2181"
+
+  remora:
+#    build: ./target/docker/.
+    image: pierone.stups.zalan.do/setanta/remora:0.0.6-2-ge24db20
+    depends_on:
+      - kafka
+    hostname: remora
+    environment:
+      KAFKA_ENDPOINT: "kafka:9092"
+#      JAVA_OPTS:               >
+#        -Xmx1g
+#        -Dcom.sun.management.jmxremote.rmi.port=9090
+#        -Dcom.sun.management.jmxremote=true
+#        -Dcom.sun.management.jmxremote.port=9090
+#        -Dcom.sun.management.jmxremote.ssl=false
+#        -Dcom.sun.management.jmxremote.authenticate=false
+#        -Dcom.sun.management.jmxremote.local.only=false
+#        -Djava.rmi.server.hostname=localhost
+    ports:
+      - "9000:9000"

@@ -1,0 +1,17 @@
+<configuration>
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%X{sourceThread}] %highlight(%-5level) %logger{24} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.apache" level="ERROR" />
+    <logger name="org.apache.kafka" level="ERROR" />
+    <logger name="org.apache.zookeeper" level="ERROR" />
+
+    <root level="debug">
+        <appender-ref ref="stdout" />
+    </root>
+
+</configuration>
