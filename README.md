@@ -1,5 +1,5 @@
 # Remora
-A simple API, Built using akka and scala, in front of kafka to give offset information. 
+A simple API application, Built using akka and scala, in front of kafka to give offset information to act as a Kafka lag checker
 
 ## Background
 
