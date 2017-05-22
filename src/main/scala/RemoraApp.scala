@@ -6,6 +6,7 @@ import akka.actor.ActorSystem
 import akka.stream.{ActorMaterializerSettings, Supervision, ActorMaterializer}
 import com.codahale.metrics.SharedMetricRegistries
 import com.codahale.metrics.jvm.{ThreadStatesGaugeSet, MemoryUsageGaugeSet, GarbageCollectorMetricSet}
+import kafka.admin.ConsumerGroupCommand.{ConsumerGroupCommandOptions, KafkaConsumerGroupService}
 
 import scala.util.control.NonFatal
 

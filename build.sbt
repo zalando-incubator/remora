@@ -38,7 +38,7 @@ libraryDependencies ++= Seq(
   "org.apache.httpcomponents" %  "httpclient"                   % "4.5.2",
   "org.scalaz"                %% "scalaz-core"                  % "7.2.8",
   "com.typesafe.play"         %% "play-json"                    % "2.4.8",
-  "org.apache.kafka"          %% "kafka"                        % "0.10.0.1",
+  "org.apache.kafka"          %% "kafka"                        % "0.10.2.1",
   "org.scalatest"             %% "scalatest"                    % "2.2.4"   % "test",
   "org.scalamock"             %% "scalamock-scalatest-support"  % "3.2"     % "test"
 )

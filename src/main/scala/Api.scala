@@ -5,7 +5,7 @@ import KafkaClientActor.{Command, DescribeKafkaClusterConsumer, ListConsumers}
 import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshalling._
-import akka.http.scaladsl.model.{MediaTypes, HttpResponse, StatusCodes}
+import akka.http.scaladsl.model.{HttpResponse, MediaTypes, StatusCodes}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.ExceptionHandler
 import akka.pattern.ask
@@ -15,7 +15,6 @@ import com.codahale.metrics.MetricRegistry
 import com.codahale.metrics.json.MetricsModule
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.config.Config
-import kafka.coordinator.GroupOverview
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -59,9 +58,9 @@ class Api(kafkaClientActorRef: ActorRef)(implicit actorSystem: ActorSystem, mate
           complete("OK")
         } ~ pathPrefix("consumers") {
           pathEnd {
-            complete(askFor[List[GroupOverview]](ListConsumers).map(Json.toJson(_).toString))
+            complete(askFor[List[String]](ListConsumers).map(Json.toJson(_).toString))
           } ~ path(Segment) { consumerGroup =>
-            complete(askFor[List[GroupInfo]](DescribeKafkaClusterConsumer(consumerGroup)).map(Json.toJson(_).toString))
+            complete(askFor[GroupInfo](DescribeKafkaClusterConsumer(consumerGroup)).map(Json.toJson(_).toString))
           }
         }
       }
@@ -84,18 +83,30 @@ object ApiSettings {
 
 object JsonOps {
 
-  implicit val groupInfoWrites: Writes[GroupInfo] = (
+  implicit val nodeWrites: Writes[Node] = (
+    (__ \ "id").writeNullable[Int] and
+      (__ \ "id_string").writeNullable[String] and
+      (__ \ "host").writeNullable[String] and
+      (__ \ "port").writeNullable[Int] and
+      (__ \ "rack").writeNullable[String]
+    ) (unlift(Node.unapply))
+
+  implicit val partitionAssignmentStateWrites: Writes[PartitionAssignmentState] = (
     (__ \ "group").write[String] and
-      (__ \ "topic").write[String] and
-      (__ \ "partition").write[Int] and
-      (__ \ "offset").writeNullable[Long] and
-      (__ \ "log_end_offset").writeNullable[Long] and
-      (__ \ "lag").writeNullable[Long] and
-      (__ \ "owner").writeNullable[String]
+    (__ \ "coordinator").writeNullable[Node] and
+    (__ \ "topic").writeNullable[String] and
+    (__ \ "partition").writeNullable[Int] and
+    (__ \ "offset").writeNullable[Long] and
+    (__ \ "lag").writeNullable[Long] and
+    (__ \ "consumer_id").writeNullable[String] and
+    (__ \ "host").writeNullable[String] and
+    (__ \ "client_id").writeNullable[String] and
+    (__ \ "log_end_offset").writeNullable[Long]
+  ) (unlift(PartitionAssignmentState.unapply))
+
+  implicit val groupInfoWrites: Writes[GroupInfo] = (
+    (__ \ "state").writeNullable[String] and
+      (__ \ "partition_assignment").writeNullable[Seq[PartitionAssignmentState]]
     ) (unlift(GroupInfo.unapply))
 
-  implicit val groupOverViewWrites: Writes[GroupOverview] = (
-    (__ \ "groupId").write[String] and
-      (__ \ "protocolType").write[String]
-    ) (unlift(GroupOverview.unapply))
 }
