@@ -10,7 +10,7 @@ All we did was wrap and hack the [kafka consumer group command](https://github.c
 
 ## Prerequisites
 
-* Kafka 0.10.0.1
+* Kafka 0.10.2.1 (for 0.10.0.1 please see the [0.1.0 release](https://github.com/zalando-incubator/remora/releases/tag/v0.1.0) as the api has changed since)
 * 2.11.8
 * Store offsets in kafka
 
@@ -31,55 +31,54 @@ All we did was wrap and hack the [kafka consumer group command](https://github.c
 which gives 
 
 ```json
-[
-    {
-      "protocolType": "consumer",
-      "groupId": "consumer-1"
-    }
-    {
-      "protocolType": "consumer",
-      "groupId": "consumer-2"
-    }
-    {
-      "protocolType": "consumer",
-      "groupId": "consumer-3"
-    }
-]
+["consumer-1", "consumer-2", "consumer-3"]
 ```
 
 ## Show specific consumer info
 `curl http://localhost:9000/consumers/<ConsumerGroupId>`
 
+State can be "Empty", "Dead", "Stable", "PreparingRebalance", "AwaitingSync"
+
 ```json
-[
-    {
-      "owner": "consumer-2_/132.34.134.12",
-      "lag": 155758,
-      "log_end_offset": 2580124,
-      "offset": 2424366,
-      "partition": 1,
-      "topic": "foobar",
-      "group": "consumer-1"
-    }
-    {
-      "owner": "consumer-2_/132.34.134.12",
-      "lag": 155758,
-      "log_end_offset": 2580124,
-      "offset": 2424366,
-      "partition": 2,
-      "topic": "foobar",
-      "group": "consumer-1"
-    }
-    {
-      "owner": "consumer-2_/132.34.134.12",
-      "lag": 155758,
-      "log_end_offset": 2580124,
-      "offset": 2424366,
-      "partition": 3,
-      "topic": "foobar",
-      "group": "consumer-1"
-    }
-]
+{  
+   "state":"Empty",
+   "partition_assignment":[  
+      {  
+         "group":"console-consumer-20891",
+         "coordinator":{  
+            "id":0,
+            "id_string":"0",
+            "host":"foo.company.com",
+            "port":9092
+         },
+         "topic":"products-in",
+         "partition":1,
+         "offset":3,
+         "lag":0,
+         "consumer_id":"-",
+         "host":"-",
+         "client_id":"-",
+         "log_end_offset":3
+      },
+      {  
+         "group":"console-consumer-20891",
+         "coordinator":{  
+            "id":0,
+            "id_string":"0",
+            "host":"foo.company.com",
+            "port":9092
+         },
+         "topic":"products-in",
+         "partition":0,
+         "offset":3,
+         "lag":0,
+         "consumer_id":"consumer-1-7baba9b9-0ec3-4241-9433-f36255dd4708",
+         "host":"/10.170.2.103",
+         "client_id":"consumer-1",
+         "log_end_offset":3
+      }
+   ]
+}
 ```
 
 ## Health
