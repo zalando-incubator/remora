@@ -36,7 +36,7 @@ class Api(kafkaClientActorRef: ActorRef)
         }
     }
 
-  implicit val duration: Timeout = 60.seconds
+  implicit val duration: Timeout = 300.seconds
 
   val settings = ApiSettings(actorSystem.settings.config)
 
