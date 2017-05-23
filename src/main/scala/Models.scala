@@ -1,5 +1,7 @@
 
 
+case class Health(healthy: Boolean, message: String, error: Option[Throwable])
+
 case class GroupInfo(state: Option[String] = None, partitionAssignmentStates: Option[Seq[PartitionAssignmentState]] = None)
 
 case class Node(id: Option[Int] = None, idString: Option[String] = None, host: Option[String] = None, port: Option[Int] = None, rack: Option[String] = None)

@@ -1,7 +1,5 @@
-import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
-import com.codahale.metrics.MetricRegistry
 import kafka.admin.ConsumerGroupCommand
 import kafka.admin.ConsumerGroupCommand.{ConsumerGroupCommandOptions, KafkaConsumerGroupService}
 
@@ -13,25 +11,13 @@ trait ConsumerGroupService {
 }
 
 class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
-                                     (implicit executionContext: ExecutionContextExecutor,
-                                      metricRegistry: MetricRegistry) extends ConsumerGroupService {
+                                     (implicit executionContext: ExecutionContextExecutor) extends ConsumerGroupService
+  with nl.grons.metrics.scala.DefaultInstrumented {
 
   private val logger = Logger.getLogger(RemoraKafkaConsumerGroupService.this.getClass.getName)
 
-  private val listTimerName = "list-timer"
-  private val describeTimerName = "describe-timer"
-
-  def measure[T](name: String)(func: => T): T = {
-    val startTime = System.currentTimeMillis()
-    val retval = func
-    val duration: Long = System.currentTimeMillis() - startTime
-    timeBlock(name, duration)
-    retval
-  }
-
-  private def timeBlock(name: String, duration: Long) = {
-    metricRegistry.timer(name).update(duration, TimeUnit.MILLISECONDS)
-  }
+  private val listTimerName = metrics.timer("list-timer")
+  private val describeTimerName = metrics.timer("describe-timer")
 
   private def createKafkaConsumerGroupService(groupId: Option[String] = None): ConsumerGroupCommand.KafkaConsumerGroupService = {
 
@@ -48,7 +34,7 @@ class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
   }
 
   def list(): Future[List[String]] = Future {
-    measure(listTimerName) {
+    listTimerName.time {
       val adminClient = createKafkaConsumerGroupService()
       try {
         adminClient.listGroups()
@@ -59,8 +45,7 @@ class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
   }
 
   def describeConsumerGroup(group: String): Future[GroupInfo] = Future {
-
-    measure(describeTimerName) {
+    describeTimerName.time {
       val kafkaConsumerGroupService = createKafkaConsumerGroupService(Some(group))
       try {
         val (state, assignments) = kafkaConsumerGroupService.describeGroup()

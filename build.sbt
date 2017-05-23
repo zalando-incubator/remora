@@ -28,9 +28,9 @@ lazy val root = (project in file("."))
 
 libraryDependencies ++= Seq(
   "ch.qos.logback"            %  "logback-classic"              % "1.1.8",
-  "io.dropwizard.metrics"     %  "metrics-core"                 % "3.1.2",
-  "io.dropwizard.metrics"     %  "metrics-jvm"                  % "3.1.2",
+  "nl.grons"                  %% "metrics-scala"                % "3.5.5_a2.3",
   "io.dropwizard.metrics"     %  "metrics-json"                 % "3.1.2",
+  "io.dropwizard.metrics"     %  "metrics-jvm"                  % "3.1.2",
   "com.typesafe.akka"         %% "akka-actor"                   % "2.4.16",
   "com.typesafe.akka"         %% "akka-http"                    % "10.0.5",
   "com.typesafe.akka"         %% "akka-slf4j"                   % "2.4.16",

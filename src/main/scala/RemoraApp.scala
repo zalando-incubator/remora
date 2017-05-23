@@ -3,19 +3,16 @@ import java.net.ConnectException
 import java.util.concurrent.TimeoutException
 
 import akka.actor.ActorSystem
-import akka.stream.{ActorMaterializerSettings, Supervision, ActorMaterializer}
-import com.codahale.metrics.SharedMetricRegistries
+import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}
 import com.codahale.metrics.jvm.{ThreadStatesGaugeSet, MemoryUsageGaugeSet, GarbageCollectorMetricSet}
-import kafka.admin.ConsumerGroupCommand.{ConsumerGroupCommandOptions, KafkaConsumerGroupService}
 
 import scala.util.control.NonFatal
 
-object RemoraApp extends App {
+object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented {
 
   private val actorSystemName: String = "remora"
   implicit val actorSystem = ActorSystem(actorSystemName)
 
-  implicit val metricRegistry = SharedMetricRegistries.getOrCreate("cats")
   metricRegistry.registerAll(new GarbageCollectorMetricSet)
   metricRegistry.registerAll(new MemoryUsageGaugeSet)
   metricRegistry.registerAll(new ThreadStatesGaugeSet)
