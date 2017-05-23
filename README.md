@@ -37,6 +37,8 @@ which gives
 ## Show specific consumer info
 `curl http://localhost:9000/consumers/<ConsumerGroupId>`
 
+State can be "Empty", "Dead", "Stable", "PreparingRebalance", "AwaitingSync"
+
 ```json
 {  
    "state":"Empty",
