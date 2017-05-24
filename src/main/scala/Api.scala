@@ -36,9 +36,10 @@ class Api(kafkaClientActorRef: ActorRef)
         }
     }
 
-  implicit val duration: Timeout = 300.seconds
-
   val settings = ApiSettings(actorSystem.settings.config)
+
+  implicit val duration: Timeout = settings.timeout
+
 
   val mapper = new ObjectMapper()
   mapper.registerModule(new MetricsModule(TimeUnit.SECONDS, TimeUnit.MILLISECONDS, false))
@@ -91,8 +92,11 @@ object Api {
     new Api(kafkaClientActorRef)
 }
 
-case class ApiSettings(port: Int)
+case class ApiSettings(port: Int, timeout: Timeout)
 
 object ApiSettings {
-  def apply(config: Config): ApiSettings = ApiSettings(config.getInt("api.port"))
+  def apply(config: Config): ApiSettings = ApiSettings(
+    config.getInt("api.port"),
+    Timeout(Duration.fromNanos(config.getDuration("api.actor-timeout").getNano))
+  )
 }
