@@ -73,7 +73,7 @@ State can be "Empty", "Dead", "Stable", "PreparingRebalance", "AwaitingSync"
          "offset":3,
          "lag":0,
          "consumer_id":"consumer-1-7baba9b9-0ec3-4241-9433-f36255dd4708",
-         "host":"/10.170.2.103",
+         "host":"/xx.xxx.xxx.xxx",
          "client_id":"consumer-1",
          "log_end_offset":3
       }
