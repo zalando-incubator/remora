@@ -1,6 +1,7 @@
 import KafkaClientActor.{DescribeKafkaClusterConsumer, ListConsumers}
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.pattern.pipe
+import nl.grons.metrics.scala.{ReceiveExceptionMeterActor, ReceiveTimerActor, ReceiveCounterActor, ActorInstrumentedLifeCycle}
 
 object KafkaClientActor {
 
@@ -13,11 +14,12 @@ object KafkaClientActor {
 
 }
 
-class KafkaClientActor(kafkaConsumerGroupService: RemoraKafkaConsumerGroupService) extends Actor with ActorLogging {
+class BaseKafkaClientActor(kafkaConsumerGroupService: RemoraKafkaConsumerGroupService) extends Actor with ActorLogging
+with nl.grons.metrics.scala.DefaultInstrumented with ActorInstrumentedLifeCycle {
 
   import context.dispatcher
 
-  override def receive: Receive = {
+  def receive: Receive = {
 
     case DescribeKafkaClusterConsumer(consumerGroupName) =>
       log.info(s"Received request for $consumerGroupName")
@@ -27,3 +29,6 @@ class KafkaClientActor(kafkaConsumerGroupService: RemoraKafkaConsumerGroupServic
       kafkaConsumerGroupService.list() pipeTo sender
   }
 }
+
+class KafkaClientActor(kafkaConsumerGroupService: RemoraKafkaConsumerGroupService)
+  extends BaseKafkaClientActor(kafkaConsumerGroupService) with ReceiveCounterActor with ReceiveTimerActor with ReceiveExceptionMeterActor
