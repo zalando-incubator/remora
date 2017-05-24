@@ -16,8 +16,8 @@ class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
 
   private val logger = Logger.getLogger(RemoraKafkaConsumerGroupService.this.getClass.getName)
 
-  private val listTimerName = metrics.timer("list-timer")
-  private val describeTimerName = metrics.timer("describe-timer")
+  private val listTimer = metrics.timer("list-timer")
+  private val describeTimer = metrics.timer("describe-timer")
 
   private def createKafkaConsumerGroupService(groupId: Option[String] = None): ConsumerGroupCommand.KafkaConsumerGroupService = {
 
@@ -34,7 +34,7 @@ class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
   }
 
   def list(): Future[List[String]] = Future {
-    listTimerName.time {
+    listTimer.time {
       val adminClient = createKafkaConsumerGroupService()
       try {
         adminClient.listGroups()
@@ -45,7 +45,7 @@ class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
   }
 
   def describeConsumerGroup(group: String): Future[GroupInfo] = Future {
-    describeTimerName.time {
+    describeTimer.time {
       val kafkaConsumerGroupService = createKafkaConsumerGroupService(Some(group))
       try {
         val (state, assignments) = kafkaConsumerGroupService.describeGroup()
