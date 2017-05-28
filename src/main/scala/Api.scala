@@ -7,7 +7,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshalling._
 import akka.http.scaladsl.model.{HttpResponse, MediaTypes, StatusCodes}
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.{StandardRoute, ExceptionHandler}
+import akka.http.scaladsl.server.{ExceptionHandler, StandardRoute}
 import akka.pattern.ask
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
@@ -16,6 +16,7 @@ import com.codahale.metrics.health.HealthCheck.Result
 import com.codahale.metrics.json.MetricsModule
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.config.Config
+import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
 import play.api.libs.json._
 
 import scala.concurrent.duration._
@@ -23,7 +24,7 @@ import scala.reflect.ClassTag
 
 class Api(kafkaClientActorRef: ActorRef)
          (implicit actorSystem: ActorSystem, materializer: ActorMaterializer)
-  extends nl.grons.metrics.scala.DefaultInstrumented {
+  extends nl.grons.metrics.scala.DefaultInstrumented with PlayJsonSupport {
 
   implicit val apiExecutionContext = actorSystem.dispatchers.lookup("api-dispatcher")
 
@@ -61,9 +62,9 @@ class Api(kafkaClientActorRef: ActorRef)
           healthCheck
         } ~ pathPrefix("consumers") {
           pathEnd {
-            complete(askFor[List[String]](ListConsumers).map(Json.toJson(_).toString))
+            complete(askFor[List[String]](ListConsumers).map(Json.toJson(_)))
           } ~ path(Segment) { consumerGroup =>
-            complete(askFor[GroupInfo](DescribeKafkaClusterConsumer(consumerGroup)).map(Json.toJson(_).toString))
+            complete(askFor[GroupInfo](DescribeKafkaClusterConsumer(consumerGroup)).map(Json.toJson(_)))
           }
         }
       }
