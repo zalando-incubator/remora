@@ -97,6 +97,6 @@ case class ApiSettings(port: Int, timeout: Timeout)
 object ApiSettings {
   def apply(config: Config): ApiSettings = ApiSettings(
     config.getInt("api.port"),
-    Timeout(Duration.fromNanos(config.getDuration("api.actor-timeout").getNano))
+    Timeout(Duration.apply(config.getString("api.actor-timeout")).asInstanceOf[FiniteDuration])
   )
 }
