@@ -1,4 +1,5 @@
 import java.util.Properties
+import java.util.logging.Logger
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.StatusCodes._
@@ -7,9 +8,8 @@ import akka.testkit.{TestActorRef, TestKit}
 import com.typesafe.config.ConfigValueFactory
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
 import net.manub.embeddedkafka.Codecs.stringDeserializer
-import net.manub.embeddedkafka.ConsumerExtensions._
 import net.manub.embeddedkafka.{EmbeddedKafka, EmbeddedKafkaConfig}
-import org.apache.kafka.clients.consumer.KafkaConsumer
+import org.apache.kafka.clients.consumer.{ConsumerRecords}
 import org.apache.kafka.common.serialization.Deserializer
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -19,11 +19,12 @@ import play.api.libs.json._
 import scala.concurrent.duration._
 
 class ApiSpec extends FlatSpec with Matchers with BeforeAndAfterAll with ScalatestRouteTest with PlayJsonSupport with Eventually {
+  private val logger = Logger.getLogger(ApiSpec.this.getClass.getName)
 
   implicit def default(implicit system: ActorSystem) = RouteTestTimeout(5.seconds)
 
   implicit override val patienceConfig =
-    PatienceConfig(timeout = scaled(Span(30, Seconds)), interval = scaled(Span(1000, Millis))) // scalastyle:ignore magic.number
+    PatienceConfig(timeout = scaled(Span(300, Seconds)), interval = scaled(Span(10000, Millis))) // scalastyle:ignore magic.number
 
   implicit val config = EmbeddedKafkaConfig()
 
@@ -44,18 +45,19 @@ class ApiSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Scalate
     props
   }
 
-  val consumer = new KafkaConsumer[String, String](consumerProps,
+  val consumer = new SimpleKafkaConsumer[String, String](consumerProps,
+    topic,
     implicitly[Deserializer[String]],
-    implicitly[Deserializer[String]])
-
+    implicitly[Deserializer[String]],
+    (record : ConsumerRecords[String, String]) => logger.info(record.toString))
 
   override def beforeAll: Unit = {
     EmbeddedKafka.start()
-    consumer.consumeLazily(topic)
+    consumer.start()
   }
 
   override def afterAll {
-    consumer.close()
+    consumer.stop()
     EmbeddedKafka.stop()
     TestKit.shutdownActorSystem(system)
   }
