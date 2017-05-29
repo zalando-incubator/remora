@@ -4,7 +4,7 @@ services:
     image: wurstmeister/zookeeper
 
   kafka:
-    image: wurstmeister/kafka:0.10.0.1
+    image: wurstmeister/kafka:0.10.2.1
     hostname: kafka
     environment:
       KAFKA_ADVERTISED_HOST_NAME: kafka
@@ -16,14 +16,13 @@ services:
       - "2181:2181"
 
   remora:
-#    build: ./target/docker/.
-    image: pierone.stups.zalan.do/setanta/remora:0.0.6-2-ge24db20
+    image: zalandoremora/remora:0.2.0
     depends_on:
       - kafka
     hostname: remora
     environment:
       KAFKA_ENDPOINT: "kafka:9092"
-#      JAVA_OPTS:               >
+#      JAVA_OPTS:
 #        -Xmx1g
 #        -Dcom.sun.management.jmxremote.rmi.port=9090
 #        -Dcom.sun.management.jmxremote=true

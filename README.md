@@ -26,6 +26,8 @@ They can be used as follows:
 docker run -it --rm -p 9000:9000 -e KAFKA_ENDPOINT=127.0.0.1:9092 zalandoremora/remora:0.2.0
 ```
 
+For further examples see the [docker-compose.yml](docker-compose/docker-compose.yml)
+
 ## Build
 
 * `sbt package`
