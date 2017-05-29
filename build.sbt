@@ -23,7 +23,8 @@ lazy val root = (project in file("."))
   .settings(gitSettings)
   .enablePlugins(
     GitVersioning,
-    JavaServerAppPackaging
+    JavaServerAppPackaging,
+    ScmSourcePlugin
   )
 
 libraryDependencies ++= Seq(
