@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/zalando-incubator/remora.svg?branch=master)](https://travis-ci.org/zalando-incubator/remora)
+
 # Remora
 A simple API application, Built using akka and scala, in front of kafka to give offset information to act as a Kafka lag checker
 
