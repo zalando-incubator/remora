@@ -7,7 +7,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshalling._
 import akka.http.scaladsl.model.{HttpResponse, MediaTypes, StatusCodes}
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.{ExceptionHandler, StandardRoute}
+import akka.http.scaladsl.server.{StandardRoute, ExceptionHandler}
 import akka.pattern.ask
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
