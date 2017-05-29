@@ -24,6 +24,9 @@ All we did was wrap and hack the [kafka consumer group command](https://github.c
 
 * SERVER_PORT - default `9000`
 * KAFKA_ENDPOINT - default `localhost:9092`
+* ACTOR_TIMEOUT - default `60 seconds`
+* AKKA_HTTP_SERVER_REQUEST_TIMEOUT - `default 60 seconds`
+* AKKA_HTTP_SERVER_IDLE_TIMEOUT - `default 60 seconds`
 
 ## Show Active Consumers
 `http://localhost:9000/consumers`
