@@ -16,6 +16,16 @@ All we did was wrap and hack the [kafka consumer group command](https://github.c
 * 2.11.8
 * Store offsets in kafka
 
+## Running
+
+Images for all versions are available on [Docker Hub](https://hub.docker.com/r/zalandoremora/remora/tags/)
+
+They can be used as follows:
+
+```
+docker run -it --rm -p 9000:9000 -e KAFKA_ENDPOINT=127.0.0.1:9092 zalandoremora/remora:0.2.0
+```
+
 ## Build
 
 * `sbt package`
