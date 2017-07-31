@@ -13,7 +13,7 @@ Remora simply provides the [Kafka consumer group command](https://github.com/apa
 # User Testimonials 
 
 > We are using Kafka 0.10.2.1 extensively.  As almost all our applications depend on Kafka, we needed a way to visualise consumer data over a time period in order to discover issues with our consumers. Remora lets us do exactly this, it exposes consumer group metrics over HTTP which allow us to create alarms if a consumer has stopped or slowed consumption from a topic or even on a single partition.
-- Team Buffalo @ Zalando Dublin
+~ Team Buffalo @ Zalando Dublin
 
 # Getting started
 
