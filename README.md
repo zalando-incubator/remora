@@ -14,6 +14,8 @@ Remora simply provides the [Kafka consumer group command](https://github.com/apa
 
 > We are using Kafka 0.10.2.1 along with Akka Streams. We use Remora to track, alert, and visualise any lag within any of our components ~ Team Setanta @ Zalando Dublin
 
+> We rely on Kafka for streaming DB change events on to other teams within our organisation. Remora greatly aids us in ensuring our Kafka and Kafka Connect components are functioning correctly by monitoring both the number of events been produced, and any lag present on a per consumer basis. It is proving an excellent tool in providing data which we use to trigger real time alerts ~ Team Warhol @ Zalando Dublin
+
 # Getting started
 
 ## Dependencies
