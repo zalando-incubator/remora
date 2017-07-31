@@ -10,6 +10,10 @@ In the past, we used Linkedin's application [burrow](https://github.com/linkedin
 
 Remora simply provides the [Kafka consumer group command](https://github.com/apache/kafka/blob/0.10.0/core/src/main/scala/kafka/admin/ConsumerGroupCommand.scala) as an HTTP endpoint.
 
+# User Testimonials 
+
+> We are using Kafka 0.10.2.1 along with Akka Streams. We use Remora to track, alert, and visualise any lag within any of our components ~ Team Setanta @ Zalando Dublin
+
 # Getting started
 
 ## Dependencies
