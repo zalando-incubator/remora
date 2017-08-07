@@ -2,15 +2,13 @@
 
 ![Grafana Graph](https://raw.githubusercontent.com/imduffy15/remora-fetcher/master/img/grafana.png)
 
-[Remora](https://github.com/zalando-incubator/remora) is a monitoring utility for [Apache Kafka](http://kafka.apache.org/) that provides consumer lag checking as a service. An HTTP endpoint is provided to request consumer group information on demand. Combining this with a time series database like [KariosDB](https://kairosdb.github.io/) it is possible to graph your consumer group status, see [remora fetcher](https://github.com/imduffy15/remora-fetcher) for an example of this. 
+[Remora](https://github.com/zalando-incubator/remora) is a monitoring utility for [Apache Kafka](http://kafka.apache.org/) that provides consumer lag checking as a service. An HTTP endpoint is provided to request consumer group information on demand. Combining this with a time series database like [KairosDB](https://kairosdb.github.io/) it is possible to graph your consumer group status; see [remora fetcher](https://github.com/imduffy15/remora-fetcher) for an example of this. 
 
-# Inspiration
+## Inspiration
 
-In the past, we used Linkedin's application [burrow](https://github.com/linkedin/Burrow) for monitoring consumer lag. We found it crashed a lot and contained [various issues](https://github.com/linkedin/Burrow/wiki/Known-Issues)
+We created Remora after spending some time using Linkedin's [burrow](https://github.com/linkedin/Burrow) application for monitoring consumer lag and experiencing some performance problems. Remora provides the [Kafka consumer group command](https://github.com/apache/kafka/blob/0.10.0/core/src/main/scala/kafka/admin/ConsumerGroupCommand.scala) as an HTTP endpoint.
 
-Remora simply provides the [Kafka consumer group command](https://github.com/apache/kafka/blob/0.10.0/core/src/main/scala/kafka/admin/ConsumerGroupCommand.scala) as an HTTP endpoint.
-
-# User Testimonials 
+## User Testimonials 
 
 > We are using Kafka 0.10.2.1 extensively.  As almost all our applications depend on Kafka, we needed a way to visualise consumer data over a time period in order to discover issues with our consumers. Remora lets us do exactly this, it exposes consumer group metrics over HTTP which allow us to create alarms if a consumer has stopped or slowed consumption from a topic or even on a single partition. ~ Team Buffalo @ Zalando Dublin
 
@@ -18,16 +16,15 @@ Remora simply provides the [Kafka consumer group command](https://github.com/apa
 
 > We rely on Kafka for streaming DB change events on to other teams within our organisation. Remora greatly aids us in ensuring our Kafka and Kafka Connect components are functioning correctly by monitoring both the number of events been produced, and any lag present on a per consumer basis. It is proving an excellent tool in providing data which we use to trigger real time alerts ~ Team Warhol @ Zalando Dublin
 
+## Getting started
 
-# Getting started
-
-## Dependencies
+### Dependencies
 
 The latest release of [Remora](https://github.com/zalando-incubator/remora) only supports [Apache Kafka](http://kafka.apache.org/) 0.10.2.1.
 
 For [Apache Kafka](http://kafka.apache.org/) 0.10.0.1 please see the [v0.1.0 release](https://github.com/zalando-incubator/remora/releases/tag/v0.1.0).
 
-## Running it
+### Running it
 
 Images for all versions are available on [Docker Hub](https://hub.docker.com/r/zalandoremora/remora/tags/)
 
@@ -48,7 +45,7 @@ $ curl http://localhost:9000/consumers
 ["consumer-1", "consumer-2", "consumer-3"]
 ```
 
-### Show specific consumer group information
+#### Show specific consumer group information
 
 ```bash
 $ curl http://localhost:9000/consumers/<ConsumerGroupId>
@@ -385,19 +382,19 @@ Create docker image:
 $ sbt docker:publishLocal
 ```
 
-# Contributing
+## Contributing
 
 We are happy to accept contributions. First, take a look at our [contributing guidelines](CONTRIBUTING.md).
 
-# TODO
+## TODO
 
 Please check the [Issues Page](https://github.com/zalando-incubator/remora/issues)
 for contribution ideas.
 
-# Contact
+## Contact
 
 Feel free to contact one of the [maintainers](MAINTAINERS).
 
-# License
+## License
 
 MIT
