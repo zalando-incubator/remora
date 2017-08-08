@@ -1,26 +1,40 @@
 #!/usr/bin/python
 
-import sys, requests
+import requests
 
 
 def check():
-  data={}
+    data = {}
 
-  consumers = requests.get('http://localhost:9000/consumers').json()
+    consumers = requests.get('http://localhost:9000/consumers').json()
 
-  for consumer in consumers:
+    for consumer_group in consumers:
 
-      consumerInfos=requests.get('http://localhost:9000/consumers/'+consumer['groupId']).json()
+        consumer_infos = requests.get(
+            'http://localhost:9000/consumers/{consumer_group}'.format(
+                consumer_group=consumer_group)).json()
 
-      for consumerInfo in consumerInfos:
-        data['{consumer_group}-{topic}-{partition}-lag'.format(consumer_group=consumer['groupId'],topic=consumerInfo['topic'],partition=consumerInfo['partition'])]=consumerInfo['lag']
-        data['{consumer_group}-{topic}-{partition}-log_end_offset'.format(consumer_group=consumer['groupId'],topic=consumerInfo['topic'],partition=consumerInfo['partition'])]=consumerInfo['log_end_offset']
-        data['{consumer_group}-{topic}-{partition}-offset'.format(consumer_group=consumer['groupId'],topic=consumerInfo['topic'],partition=consumerInfo['partition'])]=consumerInfo['offset']
+        for partition in consumer_infos['partition_assignment']:
+            data[
+                '{consumer_group}-{topic}-{partition}-lag'.format(
+                    consumer_group=consumer_group,
+                    topic=partition['topic'],
+                    partition=partition['partition'])] = partition['lag']
+            data[
+                '{consumer_group}-{topic}-{partition}-log_end_offset'.format(
+                    consumer_group=consumer_group,
+                    topic=partition['topic'],
+                    partition=partition['partition'])] = partition['log_end_offset']
+            data[
+                '{consumer_group}-{topic}-{partition}-offset'.format(
+                    consumer_group=consumer_group,
+                    topic=partition['topic'],
+                    partition=partition['partition'])] = partition['offset']
 
-      print(data)
- 
-  return data
+        print(data)
+
+    return data
 
 
 if __name__ == "__main__":
-   check()
+    check()

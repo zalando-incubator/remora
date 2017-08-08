@@ -1,11 +1,13 @@
 import sys
-from kafka import KafkProducer
+from kafka import KafkaProducer
+
 
 def produce(varargs):
-    ip =varargs[0]
-    producer = KafkProducer(bootstrap_servers=ip+":9092")
+    ip = varargs[0]
+    producer = KafkaProducer(bootstrap_servers=ip + ":9092")
     for _ in range(10):
+        print("Producing message to topic test-0")
         producer.send('test-0', b'some_message_bytes')
 
 if __name__ == "__main__":
-    print(produce(sys.argv[1:]))
+    produce(sys.argv[1:])
