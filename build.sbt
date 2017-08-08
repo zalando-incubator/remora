@@ -38,6 +38,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka"         %% "akka-slf4j"                   % "2.4.16",
   "org.apache.httpcomponents" %  "httpcore"                     % "4.4.5",
   "org.apache.httpcomponents" %  "httpclient"                   % "4.5.2",
+  "org.joda"                  % "joda-convert"                  % "1.8.1",
   "org.slf4j"                 % "jcl-over-slf4j"                % "1.7.22",
   "org.slf4j"                 % "log4j-over-slf4j"              % "1.7.22",
   "org.scalaz"                %% "scalaz-core"                  % "7.2.8",
