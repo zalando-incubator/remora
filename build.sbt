@@ -27,22 +27,26 @@ lazy val root = (project in file("."))
     ScmSourcePlugin
   )
 
+ivyScala := ivyScala.value map {
+  _.copy(overrideScalaVersion = true)
+}
+
 libraryDependencies ++= Seq(
   "ch.qos.logback"            %  "logback-classic"              % "1.1.8",
   "de.heikoseeberger"         %% "akka-http-play-json"          % "1.15.0",
   "nl.grons"                  %% "metrics-scala"                % "3.5.5_a2.3",
   "io.dropwizard.metrics"     %  "metrics-json"                 % "3.1.2",
   "io.dropwizard.metrics"     %  "metrics-jvm"                  % "3.1.2",
-  "com.typesafe.akka"         %% "akka-actor"                   % "2.4.16",
+  "com.typesafe.akka"         %% "akka-actor"                   % "2.4.17",
   "com.typesafe.akka"         %% "akka-http"                    % "10.0.5",
-  "com.typesafe.akka"         %% "akka-slf4j"                   % "2.4.16",
+  "com.typesafe.akka"         %% "akka-slf4j"                   % "2.4.17",
   "org.apache.httpcomponents" %  "httpcore"                     % "4.4.5",
   "org.apache.httpcomponents" %  "httpclient"                   % "4.5.2",
   "org.joda"                  % "joda-convert"                  % "1.8.1",
   "org.slf4j"                 % "jcl-over-slf4j"                % "1.7.22",
   "org.slf4j"                 % "log4j-over-slf4j"              % "1.7.22",
   "org.scalaz"                %% "scalaz-core"                  % "7.2.8",
-  "com.typesafe.play"         %% "play-json"                    % "2.4.8",
+  "com.typesafe.play"         %% "play-json"                    % "2.6.2",
   "org.apache.kafka"          %% "kafka"                        % "0.10.2.1",
   "com.typesafe.akka"         %% "akka-http-testkit"            % "10.0.5"  % "test",
   "org.scalatest"             %% "scalatest"                    % "2.2.4"   % "test",
