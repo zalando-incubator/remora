@@ -38,6 +38,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka"         %% "akka-slf4j"                   % "2.4.16",
   "org.apache.httpcomponents" %  "httpcore"                     % "4.4.5",
   "org.apache.httpcomponents" %  "httpclient"                   % "4.5.2",
+  "org.slf4j"                 % "jcl-over-slf4j"                % "1.7.22",
+  "org.slf4j"                 % "log4j-over-slf4j"              % "1.7.22",
   "org.scalaz"                %% "scalaz-core"                  % "7.2.8",
   "com.typesafe.play"         %% "play-json"                    % "2.4.8",
   "org.apache.kafka"          %% "kafka"                        % "0.10.2.1",
@@ -45,7 +47,7 @@ libraryDependencies ++= Seq(
   "org.scalatest"             %% "scalatest"                    % "2.2.4"   % "test",
   "org.scalamock"             %% "scalamock-scalatest-support"  % "3.2"     % "test",
   "net.manub"                 %% "scalatest-embedded-kafka"     % "0.13.1"  % "test"
-)
+).map(_.exclude("org.slf4j", "slf4j-log4j12"))
 
 assemblyMergeStrategy in assembly := {
   case PathList("org", "apache", "commons", "logging", xs @ _*) => MergeStrategy.first

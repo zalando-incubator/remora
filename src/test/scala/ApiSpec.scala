@@ -6,20 +6,23 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
 import akka.testkit.{TestActorRef, TestKit}
 import com.typesafe.config.ConfigValueFactory
+
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
 import net.manub.embeddedkafka.Codecs.stringDeserializer
 import net.manub.embeddedkafka.{EmbeddedKafka, EmbeddedKafkaConfig}
-import org.apache.kafka.clients.consumer.{ConsumerRecords}
+import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.common.serialization.Deserializer
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
-import play.api.libs.json._
 
+import play.api.libs.json._
 import scala.concurrent.duration._
 
+import org.slf4j.LoggerFactory
+
 class ApiSpec extends FlatSpec with Matchers with BeforeAndAfterAll with ScalatestRouteTest with PlayJsonSupport with Eventually {
-  private val logger = Logger.getLogger(ApiSpec.this.getClass.getName)
+  private val logger = LoggerFactory.getLogger(ApiSpec.this.getClass.getName)
 
   implicit def default(implicit system: ActorSystem) = RouteTestTimeout(5.seconds)
 
