@@ -1,0 +1,19 @@
+
+build_steps:
+- desc: Install docker
+  cmd: |
+    apt-get update
+    apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) edge"
+    apt-get update
+    apt-get install -y docker-ce
+- desc: Install sbt and java
+  cmd: |
+    echo "deb http://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.list.d/sbt.list
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823
+    apt-get update
+    apt-get install -y sbt=0.13.8 openjdk-8-jdk
+- desc: Build and push docker image
+  cmd: |
+    sbt docker:publish -Ddocker.repo=registry-write.opensource.zalan.do/dougal
