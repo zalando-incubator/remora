@@ -4,7 +4,7 @@
 
 [Remora](https://github.com/zalando-incubator/remora) is a monitoring utility for [Apache Kafka](http://kafka.apache.org/) that provides consumer lag checking as a service. An HTTP endpoint is provided to request consumer group information on demand. Combining this with a time series database like [KairosDB](https://kairosdb.github.io/) it is possible to graph your consumer group status; see [remora fetcher](https://github.com/imduffy15/remora-fetcher) for an example of this. 
 
-Remora is stable and **production ready**. Currently, a number of production kafka clusters in Zalando are monitored by Remora.
+Remora is stable and **production ready**. A number of production kafka clusters in Zalando are being monitored by Remora right now!
 
 ## Inspiration
 
