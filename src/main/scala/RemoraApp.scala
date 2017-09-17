@@ -7,6 +7,7 @@ import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}
 import com.codahale.metrics.jvm.{ThreadStatesGaugeSet, MemoryUsageGaugeSet, GarbageCollectorMetricSet}
 
 import scala.util.control.NonFatal
+import scala.concurrent.duration._
 
 object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented {
 
@@ -33,5 +34,10 @@ object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented {
   val kafkaClientActor = actorSystem.actorOf(KafkaClientActor.props(consumer), name = "kafka-client-actor")
 
   Api(kafkaClientActor).start()
+
+  val exportConsumerMetricsToRegistryActor =
+    actorSystem.actorOf(ExportConsumerMetricsToRegistryActor.props(kafkaClientActor),
+    name = "export-consumer-metrics-actor")
+  actorSystem.scheduler.schedule(0 second, 1 second, exportConsumerMetricsToRegistryActor, "export")
 
 }
