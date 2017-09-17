@@ -1,4 +1,4 @@
-import KafkaClientActor.{Command, ListConsumers}
+import KafkaClientActor.{DescribeKafkaClusterConsumer, Command, ListConsumers}
 import akka.actor._
 import akka.pattern.ask
 import akka.stream.ActorMaterializer
@@ -29,11 +29,17 @@ class BaseExportConsumerMetricsToRegistryActor(kafkaClientActorRef: ActorRef)
     case _ =>
       log.info("Exporting lag info to metrics registry!")
       val consumerList = askFor[List[String]](ListConsumers)
-      consumerList.map(_.foreach(i =>
-
-
-
-        log.info(s"Received $i")))
+      consumerList.map(_.foreach(consumerGroup => {
+        log.info(s"Received $consumerGroup")
+        val groupInfo = askFor[GroupInfo](DescribeKafkaClusterConsumer(consumerGroup))
+        groupInfo.map { gi =>
+          gi.partitionAssignmentStates.map(pa =>
+            pa.map { p =>
+              log.info(s"$p")
+            }
+          )
+        }
+      }))
   }
 }
 
