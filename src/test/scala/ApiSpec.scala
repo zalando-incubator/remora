@@ -1,5 +1,7 @@
 import java.util.Properties
 
+import config.KafkaSettings
+
 import scala.concurrent.duration._
 
 import com.typesafe.config.ConfigValueFactory
