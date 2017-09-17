@@ -1,3 +1,5 @@
+package config
+
 import com.typesafe.config.Config
 
 case class KafkaSettings(address: String)

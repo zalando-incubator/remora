@@ -5,6 +5,7 @@ import java.util.concurrent.TimeoutException
 import akka.actor.ActorSystem
 import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}
 import com.codahale.metrics.jvm.{ThreadStatesGaugeSet, MemoryUsageGaugeSet, GarbageCollectorMetricSet}
+import config.{MetricsSettings, KafkaSettings}
 
 import scala.util.control.NonFatal
 import scala.concurrent.duration._
@@ -35,9 +36,13 @@ object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented {
 
   Api(kafkaClientActor).start()
 
-  val exportConsumerMetricsToRegistryActor =
-    actorSystem.actorOf(ExportConsumerMetricsToRegistryActor.props(kafkaClientActor),
-    name = "export-consumer-metrics-actor")
-  actorSystem.scheduler.schedule(0 second, 1 second, exportConsumerMetricsToRegistryActor, "export")
+  val metricsSettings = MetricsSettings(actorSystem.settings.config)
+
+  if (metricsSettings.registryOptions.enabled) {
+    val exportConsumerMetricsToRegistryActor =
+      actorSystem.actorOf(ExportConsumerMetricsToRegistryActor.props(kafkaClientActor),
+        name = "export-consumer-metrics-actor")
+    actorSystem.scheduler.schedule(0 second, metricsSettings.registryOptions.intervalSeconds second, exportConsumerMetricsToRegistryActor, "export")
+  }
 
 }
