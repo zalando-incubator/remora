@@ -36,13 +36,13 @@ class BaseExportConsumerMetricsToRegistryActor(kafkaClientActorRef: ActorRef)
           gi.partitionAssignmentStates.map(pa => {
             pa.map { p =>
 
-              val offsetKey = s"${p.topic.get}-${p.partition.get}-${p.group}-offset"
+              val offsetKey = s"gauge.${p.topic.get}-${p.partition.get}-${p.group}-offset"
               registerOrUpdateGauge(offsetKey, p.offset)
 
-              val lagKey = s"${p.topic.get}-${p.partition.get}-${p.group}-lag"
+              val lagKey = s"gauge.${p.topic.get}-${p.partition.get}-${p.group}-lag"
               registerOrUpdateGauge(lagKey, p.lag)
 
-              val logEndKey = s"${p.topic.get}-${p.partition.get}-${p.group}-logend"
+              val logEndKey = s"gauge.${p.topic.get}-${p.partition.get}-${p.group}-logend"
               registerOrUpdateGauge(logEndKey, p.logEndOffset)
             }
           }
@@ -66,6 +66,7 @@ class BaseExportConsumerMetricsToRegistryActor(kafkaClientActorRef: ActorRef)
             override def getValue: Long = v
           })
       }
+      case None => log.error(s"Gauge $gaugeName has None!")
     }
   }
 }
