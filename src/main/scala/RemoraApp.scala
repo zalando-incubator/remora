@@ -6,12 +6,13 @@ import akka.actor.ActorSystem
 import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}
 import com.blacklocus.metrics.CloudWatchReporterBuilder
 import com.codahale.metrics.jvm.{GarbageCollectorMetricSet, MemoryUsageGaugeSet, ThreadStatesGaugeSet}
+import com.typesafe.scalalogging.LazyLogging
 import config.{KafkaSettings, MetricsSettings}
 
 import scala.concurrent.duration._
 import scala.util.control.NonFatal
 
-object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented {
+object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented with LazyLogging {
 
   private val actorSystemName: String = "remora"
   implicit val actorSystem = ActorSystem(actorSystemName)
@@ -47,7 +48,7 @@ object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented {
   }
 
   if (metricsSettings.cloudWatch.enabled) {
-
+    logger.info("Reporting metricsRegistry to Cloudwatch")
     new CloudWatchReporterBuilder()
       .withNamespace(metricsSettings.cloudWatch.name)
       .withRegistry(metricRegistry)
