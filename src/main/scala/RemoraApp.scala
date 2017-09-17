@@ -1,14 +1,15 @@
 import java.io.IOException
 import java.net.ConnectException
-import java.util.concurrent.TimeoutException
+import java.util.concurrent.{TimeUnit, TimeoutException}
 
 import akka.actor.ActorSystem
 import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}
-import com.codahale.metrics.jvm.{ThreadStatesGaugeSet, MemoryUsageGaugeSet, GarbageCollectorMetricSet}
-import config.{MetricsSettings, KafkaSettings}
+import com.blacklocus.metrics.CloudWatchReporterBuilder
+import com.codahale.metrics.jvm.{GarbageCollectorMetricSet, MemoryUsageGaugeSet, ThreadStatesGaugeSet}
+import config.{KafkaSettings, MetricsSettings}
 
-import scala.util.control.NonFatal
 import scala.concurrent.duration._
+import scala.util.control.NonFatal
 
 object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented {
 
@@ -43,6 +44,15 @@ object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented {
       actorSystem.actorOf(ExportConsumerMetricsToRegistryActor.props(kafkaClientActor),
         name = "export-consumer-metrics-actor")
     actorSystem.scheduler.schedule(0 second, metricsSettings.registryOptions.intervalSeconds second, exportConsumerMetricsToRegistryActor, "export")
+  }
+
+  if (metricsSettings.cloudWatch.enabled) {
+
+    new CloudWatchReporterBuilder()
+      .withNamespace(metricsSettings.cloudWatch.name)
+      .withRegistry(metricRegistry)
+      .build()
+      .start(metricsSettings.cloudWatch.intervalMinutes, TimeUnit.MINUTES)
   }
 
 }

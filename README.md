@@ -370,6 +370,10 @@ Additional configuration can be passed via the following environment variables:
 * ACTOR_TIMEOUT - default `60 seconds`
 * AKKA_HTTP_SERVER_REQUEST_TIMEOUT - `default 60 seconds`
 * AKKA_HTTP_SERVER_IDLE_TIMEOUT - `default 60 seconds`
+* TO_REGISTRY - `default false` reports lag/offset/end to metricsRegistry
+* EXPORT_METRICS_INTERVAL_SECONDS - `default 20` interval to report lag/offset/end to metricsRegistry
+* CLOUDWATCH_ON - `default false` reports metricsRegistry to cloudwatch, TO_REGISTRY will need to be switched on!
+* CLOUDWATCH_NAME - `default 'remora'` name to appear on cloudwatch
 
 ## Building from source
 
