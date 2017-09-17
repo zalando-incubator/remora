@@ -3,6 +3,7 @@ import akka.actor._
 import akka.pattern.ask
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
+import com.codahale.metrics.Gauge
 import nl.grons.metrics.scala.{ActorInstrumentedLifeCycle, ReceiveCounterActor, ReceiveExceptionMeterActor, ReceiveTimerActor}
 import scala.concurrent.duration._
 import scala.reflect.ClassTag
@@ -30,16 +31,42 @@ class BaseExportConsumerMetricsToRegistryActor(kafkaClientActorRef: ActorRef)
       log.info("Exporting lag info to metrics registry!")
       val consumerList = askFor[List[String]](ListConsumers)
       consumerList.map(_.foreach(consumerGroup => {
-        log.info(s"Received $consumerGroup")
         val groupInfo = askFor[GroupInfo](DescribeKafkaClusterConsumer(consumerGroup))
         groupInfo.map { gi =>
-          gi.partitionAssignmentStates.map(pa =>
+          gi.partitionAssignmentStates.map(pa => {
             pa.map { p =>
-              log.info(s"$p")
+
+              val offsetKey = s"${p.topic.get}-${p.partition.get}-${p.group}-offset"
+              registerOrUpdateGauge(offsetKey, p.offset)
+
+              val lagKey = s"${p.topic.get}-${p.partition.get}-${p.group}-lag"
+              registerOrUpdateGauge(lagKey, p.lag)
+
+              val logEndKey = s"${p.topic.get}-${p.partition.get}-${p.group}-logend"
+              registerOrUpdateGauge(logEndKey, p.logEndOffset)
             }
+          }
           )
         }
       }))
+  }
+
+  //yea the gauges aren't really meant to be used by this, but i dont want to cache the results.
+  def registerOrUpdateGauge(gaugeName: String, value: Option[Long]) = {
+    value match {
+      case Some(v) =>
+        try {
+        metricRegistry.register(gaugeName, new Gauge[Long] {
+          override def getValue: Long = v
+        })
+      } catch {
+        case e: IllegalArgumentException =>
+          metricRegistry.remove(gaugeName)
+          metricRegistry.register(gaugeName, new Gauge[Long] {
+            override def getValue: Long = v
+          })
+      }
+    }
   }
 }
 
