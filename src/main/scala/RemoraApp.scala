@@ -4,7 +4,8 @@ import java.util.concurrent.{TimeUnit, TimeoutException}
 
 import akka.actor.ActorSystem
 import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}
-import com.blacklocus.metrics.CloudWatchReporterBuilder
+import com.amazonaws.services.cloudwatch.{AmazonCloudWatchAsyncClientBuilder, AmazonCloudWatchAsync}
+import com.blacklocus.metrics.{CloudWatchReporter, CloudWatchReporterBuilder}
 import com.codahale.metrics.jvm.{GarbageCollectorMetricSet, MemoryUsageGaugeSet, ThreadStatesGaugeSet}
 import com.typesafe.scalalogging.LazyLogging
 import config.{KafkaSettings, MetricsSettings}
@@ -49,9 +50,12 @@ object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented wit
 
   if (metricsSettings.cloudWatch.enabled) {
     logger.info("Reporting metricsRegistry to Cloudwatch")
+    val amazonCloudWatchAsync: AmazonCloudWatchAsync = AmazonCloudWatchAsyncClientBuilder.defaultClient
+
     new CloudWatchReporterBuilder()
       .withNamespace(metricsSettings.cloudWatch.name)
       .withRegistry(metricRegistry)
+      .withClient(amazonCloudWatchAsync)
       .build()
       .start(metricsSettings.cloudWatch.intervalMinutes, TimeUnit.MINUTES)
   }
