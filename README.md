@@ -30,12 +30,12 @@ For [Apache Kafka](http://kafka.apache.org/) 0.10.0.1 please see the [v0.1.0 rel
 
 ### Running it
 
-Images for all versions are available on [Docker Hub](https://hub.docker.com/r/zalandoremora/remora/tags/)
+Images for all versions are available on [Zalando opensource pierone](http://registry.opensource.zalan.do)
 
 They can be used as follows:
 
 ```bash
-docker run -it --rm -p 9000:9000 -e KAFKA_ENDPOINT=127.0.0.1:9092 zalandoremora/remora:0.2.0
+docker run -it --rm -p 9000:9000 -e KAFKA_ENDPOINT=127.0.0.1:9092 registry.opensource.zalan.do/dougal/remora
 ```
 
 For further examples see the [docker-compose.yml](docker-compose/docker-compose.yml)
