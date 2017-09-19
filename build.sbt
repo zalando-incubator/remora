@@ -6,7 +6,7 @@ lazy val commonSettings = Seq(
 
 lazy val dockerSettings = Seq(
   daemonUser in Docker           := "root",
-  dockerBaseImage in Docker      := "registry.opensource.zalan.do/stups/openjdk:8u91-b14-1-22",
+  dockerBaseImage in Docker      := "registry.opensource.zalan.do/stups/openjdk:8u66-b17-1-2",
   dockerExposedPorts in Docker   := Seq(9000),
   dockerExposedVolumes in Docker := Seq("/opt/docker/logs"),
   dockerRepository in Docker     := sys.props.get("docker.repo"),
