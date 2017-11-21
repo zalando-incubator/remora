@@ -5,12 +5,12 @@ lazy val commonSettings = Seq(
 )
 
 lazy val dockerSettings = Seq(
-  daemonUser in Docker           := "root",
-  dockerBaseImage in Docker      := "registry.opensource.zalan.do/stups/openjdk:8u66-b17-1-2",
-  dockerExposedPorts in Docker   := Seq(9000),
-  dockerExposedVolumes in Docker := Seq("/opt/docker/logs"),
-  dockerRepository in Docker     := sys.props.get("docker.repo"),
-  maintainer in Docker           := "team-setanta@zalando.ie"
+  daemonUser           := "root",
+  dockerBaseImage      := "registry.opensource.zalan.do/stups/openjdk:1.8.0-131-8",
+  dockerExposedPorts   := Seq(9000),
+  dockerExposedVolumes := Seq("/opt/docker/logs"),
+  dockerRepository     := sys.props.get("docker.repo"),
+  maintainer           := "team-setanta@zalando.ie"
 )
 
 lazy val gitSettings = Seq(
@@ -50,11 +50,11 @@ libraryDependencies ++= Seq(
   "org.slf4j"                 % "log4j-over-slf4j"              % "1.7.22",
   "org.scalaz"                %% "scalaz-core"                  % "7.2.8",
   "com.typesafe.play"         %% "play-json"                    % "2.6.2",
-  "org.apache.kafka"          %% "kafka"                        % "0.10.2.1",
+  "org.apache.kafka"          %% "kafka"                        % "1.0.0",
   "com.typesafe.akka"         %% "akka-http-testkit"            % "10.0.5"  % "test",
   "org.scalatest"             %% "scalatest"                    % "2.2.4"   % "test",
   "org.scalamock"             %% "scalamock-scalatest-support"  % "3.2"     % "test",
-  "net.manub"                 %% "scalatest-embedded-kafka"     % "0.13.1"  % "test"
+  "net.manub"                 %% "scalatest-embedded-kafka"     % "0.14.0"  % "test"
 ).map(_.exclude("org.slf4j", "slf4j-log4j12"))
 
 assemblyMergeStrategy in assembly := {

@@ -390,6 +390,12 @@ Create docker image:
 $ sbt docker:publishLocal
 ```
 
+Docker compose
+
+```bash
+$ docker-compose up
+```
+
 ## Contributing
 
 We are happy to accept contributions. First, take a look at our [contributing guidelines](CONTRIBUTING.md).
