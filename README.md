@@ -374,6 +374,13 @@ Additional configuration can be passed via the following environment variables:
 * EXPORT_METRICS_INTERVAL_SECONDS - `default 20` interval to report lag/offset/end to metricsRegistry
 * CLOUDWATCH_ON - `default false` reports metricsRegistry to cloudwatch, TO_REGISTRY will need to be switched on!
 * CLOUDWATCH_NAME - `default 'remora'` name to appear on cloudwatch
+* DATADOG_ON - `default false` reports metricsRegistry to Datadog, TO_REGISTRY will need to be switched on!
+* DATADOG_NAME - `default 'remora'` name to appear on datadog
+* DATADOG_INTERVAL_MINUTES - `default '1'` The reporting interval, in minutes.
+* DATADOG_AGENT_HOST - `default 'localhost'` The host on which a Datadog agent is running.
+* DATADOG_AGENT_PORT - `default '8125'` The port of the Datadog agent.
+* DATADOG_CONSUMER_GROUPS - `default '[]'` List of consumer groups for which metrics will be sent to Datadog. An empty list means that all metrics will be sent.
+
 
 ## Building from source
 
