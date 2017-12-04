@@ -4,7 +4,7 @@ services:
     image: wurstmeister/zookeeper
 
   kafka:
-    image: wurstmeister/kafka:0.10.2.1
+    image: wurstmeister/kafka:1.0.0
     hostname: kafka
     environment:
       KAFKA_ADVERTISED_HOST_NAME: kafka
