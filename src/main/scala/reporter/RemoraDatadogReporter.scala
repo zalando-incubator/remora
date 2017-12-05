@@ -8,10 +8,9 @@ import org.coursera.metrics.datadog.DatadogReporter
 import org.coursera.metrics.datadog.transport.UdpTransport
 
 /**
-  * Integration for DataDog
   *
   * @param metricRegistry The metrics registry containing the metrics
-  * @param datadogConfig   The configuration for this reporter
+  * @param datadogConfig  The configuration for this reporter
   */
 class RemoraDatadogReporter(metricRegistry: MetricRegistry, datadogConfig: DataDog) {
 

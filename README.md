@@ -374,8 +374,19 @@ Additional configuration can be passed via the following environment variables:
 * AKKA_HTTP_SERVER_IDLE_TIMEOUT - `default 60 seconds`
 * TO_REGISTRY - `default false` reports lag/offset/end to metricsRegistry
 * EXPORT_METRICS_INTERVAL_SECONDS - `default 20` interval to report lag/offset/end to metricsRegistry
+
+
+### Configuring Remora with Cloudwatch
+
+The following environment variables can be used to configure reporting to Cloudwatch:
+
 * CLOUDWATCH_ON - `default false` reports metricsRegistry to cloudwatch, TO_REGISTRY will need to be switched on!
 * CLOUDWATCH_NAME - `default 'remora'` name to appear on cloudwatch
+
+### Configuring Remora with Datadog
+
+The following environment variables can be used to configure reporting to Datadog:
+
 * DATADOG_ON - `default false` reports metricsRegistry to Datadog, TO_REGISTRY will need to be switched on!
 * DATADOG_NAME - `default 'remora'` name to appear on datadog
 * DATADOG_INTERVAL_MINUTES - `default '1'` The reporting interval, in minutes.
@@ -383,6 +394,15 @@ Additional configuration can be passed via the following environment variables:
 * DATADOG_AGENT_PORT - `default '8125'` The port of the Datadog agent.
 * DATADOG_CONSUMER_GROUPS - `default '[]'` List of consumer groups for which metrics will be sent to Datadog. An empty list means that all metrics will be sent.
 
+__Reporting to datadog agent__:
+
+Reporting to Datadog is done via [DogStatsD](https://docs.datadoghq.com/guides/dogstatsd/), which is usually running on the same host as remora.
+However, as Remora is running inside a docker container, some steps are required to make the integration:
+
+* Set `DATADOG_AGENT_HOST` as the address of the docker host on your machine
+* In the datadog agent configuration, set `non_local_traffic: yes`
+
+This way, a docker container running Remora will be able to communicate with a Datadog agent on the host machine.
 
 ## Building from source
 
