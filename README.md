@@ -18,7 +18,9 @@ We created Remora after spending some time using Linkedin's [burrow](https://git
 
 > We rely on Kafka for streaming DB change events on to other teams within our organisation. Remora greatly aids us in ensuring our Kafka and Kafka Connect components are functioning correctly by monitoring both the number of events been produced, and any lag present on a per consumer basis. It is proving an excellent tool in providing data which we use to trigger real time alerts ~ Team Warhol @ Zalando Dublin
 
-> We use Kafka and Kafka Streaming to orchestrate the different components of our text processing pipeline. Through data provided by Remora, we monitor lags in differnet topics as part of our monitoring dashboard and alerting system. Remora makes it easier for us to quickly identify and respond to bottlenecks and problems. ~ Team Sapphire @ Zalando Dublin 
+> We use Kafka and Kafka Streaming to orchestrate the different components of our text processing pipeline. Through data provided by Remora, we monitor lags in differnet topics as part of our monitoring dashboard and alerting system. Remora makes it easier for us to quickly identify and respond to bottlenecks and problems. ~ Team Sapphire @ Zalando Dublin
+
+> We are using Mirror Maker to replicate data between two Kafka brokers and Remora has been a great help to monitor the replication in real time. The metrics exposed by Remora are pushed to Datadog, on top of which we build dashboards and triggers to help us react in case of failure. ~ Sqooba Switzerland
 
 ## Getting started
 
