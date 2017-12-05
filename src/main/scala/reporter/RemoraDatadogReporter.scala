@@ -7,11 +7,6 @@ import config.DataDog
 import org.coursera.metrics.datadog.DatadogReporter
 import org.coursera.metrics.datadog.transport.UdpTransport
 
-/**
-  *
-  * @param metricRegistry The metrics registry containing the metrics
-  * @param datadogConfig  The configuration for this reporter
-  */
 class RemoraDatadogReporter(metricRegistry: MetricRegistry, datadogConfig: DataDog) {
 
 
