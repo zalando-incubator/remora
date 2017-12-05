@@ -38,6 +38,7 @@ libraryDependencies ++= Seq(
   "io.dropwizard.metrics"         %  "metrics-json"                 % "3.1.2",
   "io.dropwizard.metrics"         %  "metrics-jvm"                  % "3.1.2",
   "com.blacklocus"                % "metrics-cloudwatch"            % "0.4.0",
+  "org.coursera"                  % "dropwizard-metrics-datadog"    % "1.1.13",
   "com.amazonaws"                 % "aws-java-sdk"                  % "1.11.189",
   "com.typesafe.scala-logging"    %% "scala-logging"                % "3.7.2",
   "com.typesafe.akka"             %% "akka-actor"                   % "2.4.17",
@@ -53,8 +54,8 @@ libraryDependencies ++= Seq(
   "org.apache.kafka"              %% "kafka"                        % "1.0.0",
   "com.typesafe.akka"             %% "akka-http-testkit"            % "10.0.5"  % "test",
   "org.scalatest"                 %% "scalatest"                    % "2.2.4"   % "test",
-  "org.scalamock"                 %% "scalamock-scalatest-support"  % "3.2"     % "test",
-  "net.manub"                     %% "scalatest-embedded-kafka"     % "1.0.0"  % "test"
+  "org.scalamock"                 %% "scalamock-scalatest-support"  % "3.6.0"   % "test",
+  "net.manub"                     %% "scalatest-embedded-kafka"     % "1.0.0"   % "test"
 ).map(_.exclude("org.slf4j", "slf4j-log4j12"))
 
 assemblyMergeStrategy in assembly := {
