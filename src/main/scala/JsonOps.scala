@@ -26,7 +26,8 @@ object JsonOps {
 
   implicit val groupInfoWrites: Writes[GroupInfo] = (
     (__ \ "state").writeNullable[String] and
-      (__ \ "partition_assignment").writeNullable[Seq[PartitionAssignmentState]]
+      (__ \ "partition_assignment").writeNullable[Seq[PartitionAssignmentState]] and
+      (__ \ "lag_per_topic").writeNullable[Map[String, Long]]
     ) (unlift(GroupInfo.unapply))
 
 }

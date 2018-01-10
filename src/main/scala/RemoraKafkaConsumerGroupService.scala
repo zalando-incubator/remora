@@ -8,6 +8,7 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
 
 trait ConsumerGroupService {
   def list(): Future[List[String]]
+
   def describeConsumerGroup(group: String): Future[GroupInfo]
 }
 
@@ -51,14 +52,24 @@ class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
       try {
         val (state, assignments) = kafkaConsumerGroupService.describeGroup()
         assignments match {
-          case Some(partitionAssignmentStates) => GroupInfo(state,
-            Some(partitionAssignmentStates.map(a => PartitionAssignmentState(a.group,
+          case Some(partitionAssignmentStates) =>
+            val assignments = Some(partitionAssignmentStates.map(a => PartitionAssignmentState(a.group,
               a.coordinator match {
                 case Some(c) => Some(Node(Option(c.id), Option(c.idString), Option(c.host), Option(c.port), Option(c.rack)))
                 case None => None
               },
               a.topic, a.partition, a.offset,
-              a.lag, a.consumerId, a.host, a.clientId, a.logEndOffset))))
+              a.lag, a.consumerId, a.host, a.clientId, a.logEndOffset)))
+
+            val lagPerTopic = Some(partitionAssignmentStates.filter(state => state.topic.isDefined)
+              .groupBy(state => state.topic.get)
+              .map { case (topic, partitions) => (topic, partitions.map(_.lag).map {
+                case Some(lag) => lag.toLong
+                case None => 0L
+              }.sum)
+              })
+
+            GroupInfo(state, assignments, lagPerTopic)
           case None => GroupInfo(state)
         }
       } finally {

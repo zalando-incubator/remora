@@ -80,6 +80,8 @@ class ApiSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Scalate
         status should be(OK)
         val response = entityAs[JsValue]
         val partitionAssignmentState = (response \ "partition_assignment").as[JsArray].value
+        val lagPerTopic = (response \ "lag_per_topic").as[JsValue]
+        (lagPerTopic \ "test-topic").get.asInstanceOf[JsNumber].value should be(0)
         partitionAssignmentState.size should be > 0
       }
     }

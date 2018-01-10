@@ -92,7 +92,10 @@ $ curl http://localhost:9000/consumers/<ConsumerGroupId>
          "client_id":"consumer-1",
          "log_end_offset":3
       }
-   ]
+   ],
+   "lag_per_topic":{
+        "products-in" : 0
+   }
 }
 ```
 
