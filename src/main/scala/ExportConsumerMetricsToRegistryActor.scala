@@ -45,6 +45,12 @@ class BaseExportConsumerMetricsToRegistryActor(kafkaClientActorRef: ActorRef)
               val logEndKey = s"gauge.${p.topic.get}-${p.partition.get}-${p.group}-logend"
               registerOrUpdateGauge(logEndKey, p.logEndOffset)
             }
+            gi.lagPerTopic.map{lagPerTopic =>
+              lagPerTopic.foreach{case (topic, totalLag) =>
+                val lagKey = s"gauge.${topic}-${consumerGroup}-lag"
+                registerOrUpdateGauge(lagKey, Some(totalLag))
+              }
+            }
           }
           )
         }
