@@ -3,6 +3,7 @@ package reporter
 
 import com.codahale.metrics.{Metric, MetricFilter, MetricRegistry}
 import config.DataDog
+import org.coursera.metrics.datadog.MetricNameFormatter
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers, PrivateMethodTester}
 
@@ -10,6 +11,7 @@ class RemoraDatadogReporterSpec extends FlatSpec with Matchers with PrivateMetho
 
   private val metricRegistry: MetricRegistry = new MetricRegistry
   private val metric: Metric = mock[Metric]
+  private val config = DataDog(enabled = true, "test", 1, "localhost", 8125, List.empty)
 
   "Metrics filter" should "match any metric when no filter is given" in {
     val filter = buildMetricFilter(List.empty)
@@ -30,10 +32,32 @@ class RemoraDatadogReporterSpec extends FlatSpec with Matchers with PrivateMetho
     filter.matches("some-metrics", metric) should be(false)
   }
 
+  "Metric name formatter" should "add tag information if metric is well formatted" in {
+    val formatter = getMetricNameFormatter(config)
+
+    formatter.format(s"${config.name}.gauge.test.1.test-consumer.lag") should be(s"${config.name}.gauge.test.1.test-consumer.lag[topic:test,group:test-consumer,partition:1]")
+  }
+
+  it should "not add partition tag information if no partition" in {
+    val formatter = getMetricNameFormatter(config)
+
+    formatter.format(s"${config.name}.gauge.test-topic.test-consumer.totalLag") should be(s"${config.name}.gauge.test-topic.test-consumer.totalLag[topic:test-topic,group:test-consumer]")
+  }
+
+  it should "not add tag information otherwise" in {
+    val formatter = getMetricNameFormatter(config)
+
+    formatter.format(s"${config.name}.gauge.test_1_faulty_test-consumer__lag") should be(s"${config.name}.gauge.test_1_faulty_test-consumer__lag")
+  }
 
   private def buildMetricFilter(kafkaConsumerList: List[String]): MetricFilter = {
     val config = DataDog(enabled = true, "test", 1, "localhost", 8125, kafkaConsumerList)
     val reporter = new RemoraDatadogReporter(metricRegistry, config)
     reporter invokePrivate PrivateMethod[MetricFilter]('kafkaConsumerGroupFilter)()
+  }
+
+  private def getMetricNameFormatter(config: DataDog): MetricNameFormatter = {
+    val reporter = new RemoraDatadogReporter(metricRegistry, config)
+    reporter invokePrivate PrivateMethod[MetricNameFormatter]('metricNameFormatter)()
   }
 }
