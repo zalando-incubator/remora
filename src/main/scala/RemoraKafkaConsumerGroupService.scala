@@ -3,6 +3,7 @@ import java.util.logging.Logger
 import config.KafkaSettings
 import kafka.admin.ConsumerGroupCommand
 import kafka.admin.ConsumerGroupCommand.{ConsumerGroupCommandOptions, KafkaConsumerGroupService}
+import models.{GroupInfo, Node, PartitionAssignmentState}
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 

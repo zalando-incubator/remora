@@ -1,10 +1,13 @@
-import KafkaClientActor.{DescribeKafkaClusterConsumer, Command, ListConsumers}
+import KafkaClientActor.{Command, DescribeKafkaClusterConsumer, ListConsumers}
 import akka.actor._
 import akka.pattern.ask
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import com.codahale.metrics.Gauge
+import models.RegistryKafkaMetric._
+import models.{GroupInfo, RegistryKafkaMetric}
 import nl.grons.metrics.scala.{ActorInstrumentedLifeCycle, ReceiveCounterActor, ReceiveExceptionMeterActor, ReceiveTimerActor}
+
 import scala.concurrent.duration._
 import scala.reflect.ClassTag
 
@@ -35,19 +38,18 @@ class BaseExportConsumerMetricsToRegistryActor(kafkaClientActorRef: ActorRef)
         groupInfo.map { gi =>
           gi.partitionAssignmentStates.map(pa => {
             pa.map { p =>
-
-              val offsetKey = s"gauge.${p.topic.get}-${p.partition.get}-${p.group}-offset"
+              val offsetKey = encode(RegistryKafkaMetric("gauge", p.topic.get, p.partition.map(_.toString), p.group, "offset"))
               registerOrUpdateGauge(offsetKey, p.offset)
 
-              val lagKey = s"gauge.${p.topic.get}-${p.partition.get}-${p.group}-lag"
+              val lagKey = encode(RegistryKafkaMetric("gauge", p.topic.get, p.partition.map(_.toString), p.group, "lag"))
               registerOrUpdateGauge(lagKey, p.lag)
 
-              val logEndKey = s"gauge.${p.topic.get}-${p.partition.get}-${p.group}-logend"
+              val logEndKey =  encode(RegistryKafkaMetric("gauge", p.topic.get, p.partition.map(_.toString), p.group, "logend"))
               registerOrUpdateGauge(logEndKey, p.logEndOffset)
             }
-            gi.lagPerTopic.map{lagPerTopic =>
-              lagPerTopic.foreach{case (topic, totalLag) =>
-                val lagKey = s"gauge.${topic}-${consumerGroup}-lag"
+            gi.lagPerTopic.map { lagPerTopic =>
+              lagPerTopic.foreach { case (topic, totalLag) =>
+                val lagKey = encode(RegistryKafkaMetric("gauge", topic, None, consumerGroup, "lag" ))
                 registerOrUpdateGauge(lagKey, Some(totalLag))
               }
             }
@@ -60,17 +62,12 @@ class BaseExportConsumerMetricsToRegistryActor(kafkaClientActorRef: ActorRef)
   //yea the gauges aren't really meant to be used by this, but i dont want to cache the results.
   def registerOrUpdateGauge(gaugeName: String, value: Option[Long]) = {
     value match {
-      case Some(v) =>
-        try {
-        metricRegistry.register(gaugeName, new Gauge[Long] {
+      case Some(v) => {
+        val gauge = metricRegistry.getMetrics.getOrDefault(gaugeName, new Gauge[Long] {
           override def getValue: Long = v
         })
-      } catch {
-        case e: IllegalArgumentException =>
-          metricRegistry.remove(gaugeName)
-          metricRegistry.register(gaugeName, new Gauge[Long] {
-            override def getValue: Long = v
-          })
+        metricRegistry.remove(gaugeName)
+        metricRegistry.register(gaugeName, gauge)
       }
       case None => log.error(s"Gauge $gaugeName has None!")
     }

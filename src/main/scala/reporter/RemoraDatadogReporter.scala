@@ -4,8 +4,10 @@ import java.util.concurrent.TimeUnit
 
 import com.codahale.metrics.{Metric, MetricFilter, MetricRegistry}
 import config.DataDog
-import org.coursera.metrics.datadog.DatadogReporter
+import models.RegistryKafkaMetric
+import org.coursera.metrics.datadog.TaggedName.TaggedNameBuilder
 import org.coursera.metrics.datadog.transport.UdpTransport
+import org.coursera.metrics.datadog.{DatadogReporter, MetricNameFormatter}
 
 class RemoraDatadogReporter(metricRegistry: MetricRegistry, datadogConfig: DataDog) {
 
@@ -22,11 +24,26 @@ class RemoraDatadogReporter(metricRegistry: MetricRegistry, datadogConfig: DataD
     }
   }
 
+  private val metricNameFormatter: MetricNameFormatter = new MetricNameFormatter {
+    override def format(nameWithPrefix: String, path: String*): String = {
+      RegistryKafkaMetric.decode(nameWithPrefix.replaceFirst(s"${datadogConfig.name}\\.","")) match {
+        case Some(registryKafkaMetric) =>
+          val builder = new TaggedNameBuilder().metricName(nameWithPrefix)
+            .addTag("topic", registryKafkaMetric.topic)
+            .addTag("group", registryKafkaMetric.group)
+          registryKafkaMetric.partition.foreach(p => builder.addTag("partition", p))
+          builder.build().encode()
+        case None => nameWithPrefix
+      }
+    }
+  }
+
   def startReporter(): Unit = DatadogReporter
     .forRegistry(metricRegistry)
     .withPrefix(datadogConfig.name)
     .withTransport(transport)
     .filter(kafkaConsumerGroupFilter)
+    .withMetricNameFormatter(metricNameFormatter)
     .build
     .start(datadogConfig.intervalMinutes, TimeUnit.MINUTES)
 
