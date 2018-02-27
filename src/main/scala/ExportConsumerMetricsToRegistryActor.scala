@@ -63,11 +63,10 @@ class BaseExportConsumerMetricsToRegistryActor(kafkaClientActorRef: ActorRef)
   def registerOrUpdateGauge(gaugeName: String, value: Option[Long]) = {
     value match {
       case Some(v) => {
-        val gauge = metricRegistry.getMetrics.getOrDefault(gaugeName, new Gauge[Long] {
+        metricRegistry.remove(gaugeName)
+        metricRegistry.register(gaugeName, new Gauge[Long] {
           override def getValue: Long = v
         })
-        metricRegistry.remove(gaugeName)
-        metricRegistry.register(gaugeName, gauge)
       }
       case None => log.error(s"Gauge $gaugeName has None!")
     }
