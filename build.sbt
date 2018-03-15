@@ -10,7 +10,6 @@ lazy val dockerSettings = Seq(
   dockerExposedPorts   := Seq(9000),
   dockerExposedVolumes := Seq("/opt/docker/logs"),
   dockerRepository     := sys.props.get("docker.repo"),
-  dockerUpdateLatest := true,
   maintainer           := "team-setanta@zalando.ie"
 )
 
