@@ -16,4 +16,4 @@ build_steps:
     apt-get install -y sbt=0.13.8 openjdk-8-jdk
 - desc: Build and push docker image
   cmd: |
-    sbt docker:publish -Ddocker.repo=registry-write.opensource.zalan.do/dougal
+    sbt docker:publish -Ddocker.repo=registry-write.opensource.zalan.do/machina
