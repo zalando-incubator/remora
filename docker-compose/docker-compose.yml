@@ -16,7 +16,7 @@ services:
       - "2181:2181"
 
   remora:
-    image: registry.opensource.zalan.do/dougal/remora
+    image: registry.opensource.zalan.do/machina/remora
     depends_on:
       - kafka
     hostname: remora

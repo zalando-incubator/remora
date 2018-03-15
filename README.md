@@ -39,7 +39,7 @@ Images for all versions are available on [Zalando opensource pierone](http://reg
 They can be used as follows:
 
 ```bash
-docker run -it --rm -p 9000:9000 -e KAFKA_ENDPOINT=127.0.0.1:9092 registry.opensource.zalan.do/dougal/remora
+docker run -it --rm -p 9000:9000 -e KAFKA_ENDPOINT=127.0.0.1:9092 registry.opensource.zalan.do/machina/remora
 ```
 
 For further examples see the [docker-compose.yml](docker-compose/docker-compose.yml)
