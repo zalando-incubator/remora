@@ -44,6 +44,8 @@ docker run -it --rm -p 9000:9000 -e KAFKA_ENDPOINT=127.0.0.1:9092 registry.opens
 
 For further examples see the [docker-compose.yml](docker-compose/docker-compose.yml)
 
+For examples with broker authentication see the [docker-compose.yml](auth-example/docker-compose.yml)
+
 ### Usage
 
 #### Show active consumers 

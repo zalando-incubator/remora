@@ -1,0 +1,35 @@
+version: '3'
+services:
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+     - '2181:2181'
+
+  kafka:
+    image: 'bitnami/kafka:latest'
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_LISTENERS=SASL_PLAINTEXT://:9092
+      - KAFKA_ADVERTISED_LISTENERS=SASL_PLAINTEXT://localhost:9092
+      - KAFKA_BROKER_USER=my-user
+      - KAFKA_BROKER_PASSWORD=my-password
+    ports:
+      - '9092:9092'
+
+  remora:
+    image: registry.opensource.zalan.do/machina/remora
+    depends_on:
+      - kafka
+    hostname: remora
+    volumes:
+      - ./auth.properties:/auth.properties
+    environment:
+      KAFKA_ENDPOINT: "kafka:9092"
+      KAFKA_COMMAND_CONFIG: "/auth.properties"
+    ports:
+      - "9000:9000"
