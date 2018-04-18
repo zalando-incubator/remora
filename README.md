@@ -28,9 +28,17 @@ We created Remora after spending some time using Linkedin's [burrow](https://git
 
 The latest release of [Remora](https://github.com/zalando-incubator/remora) supports [Apache Kafka](http://kafka.apache.org/) 0.10.2.1 and 1.0.0.
 
-For [Apache Kafka](http://kafka.apache.org/) 0.10.0.1 please see the [v0.1.0 release](https://github.com/zalando-incubator/remora/releases/tag/v0.1.0).
-For [Apache Kafka](http://kafka.apache.org/) 0.10.2.1 please see the [v0.2.0 release](https://github.com/zalando-incubator/remora/releases/tag/v0.2.0).
-For [Apache Kafka](http://kafka.apache.org/) 1.0.0 please see the [v0.2.0 release](https://github.com/zalando-incubator/remora/releases/tag/v1.0.0).
+* For [Apache Kafka](http://kafka.apache.org/) 0.10.0.1 please see the [v0.1.0 release](https://github.com/zalando-incubator/remora/releases/tag/v0.1.0).
+* For [Apache Kafka](http://kafka.apache.org/) 0.10.2.1 please see the [v0.2.0 release](https://github.com/zalando-incubator/remora/releases/tag/v0.2.0).
+* For [Apache Kafka](http://kafka.apache.org/) 1.0.0 please see the [v0.2.0 release](https://github.com/zalando-incubator/remora/releases/tag/v1.0.0).
+
+To find the latest releases, please see the following examples
+
+`$ curl https://registry.opensource.zalan.do/teams/dougal/artifacts/remora/tags | jq ".[] | .name"`
+
+`$ pierone latest dougal remora --url registry.opensource.zalan.do` (Which would require a `$ pip3 install stups-pierone`)
+
+Also the latest tag is built automatically.
 
 ### Running it
 
