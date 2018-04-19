@@ -34,9 +34,9 @@ The latest release of [Remora](https://github.com/zalando-incubator/remora) supp
 
 To find the latest releases, please see the following examples
 
-`$ curl https://registry.opensource.zalan.do/teams/dougal/artifacts/remora/tags | jq ".[] | .name"`
+`$ curl https://registry.opensource.zalan.do/teams/machina/artifacts/remora/tags | jq ".[] | .name"`
 
-`$ pierone latest dougal remora --url registry.opensource.zalan.do` (Which would require a `$ pip3 install stups-pierone`)
+`$ pierone latest machina remora --url registry.opensource.zalan.do` (Which would require a `$ pip3 install stups-pierone`)
 
 Also the latest tag is built automatically.
 
