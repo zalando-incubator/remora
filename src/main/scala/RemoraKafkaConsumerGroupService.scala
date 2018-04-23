@@ -5,6 +5,7 @@ import kafka.admin.ConsumerGroupCommand
 import kafka.admin.ConsumerGroupCommand.{ConsumerGroupCommandOptions, KafkaConsumerGroupService}
 import models.{GroupInfo, Node, PartitionAssignmentState}
 
+import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
 trait ConsumerGroupService {
@@ -23,13 +24,20 @@ class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
   private val describeTimer = metrics.timer("describe-timer")
 
   private def createKafkaConsumerGroupService(groupId: Option[String] = None): ConsumerGroupCommand.KafkaConsumerGroupService = {
-
-    val baseConfig: Array[String] = Array("--bootstrap-server", kafkaSettings.address)
-
     groupId match {
-      case Some(g) => createKafkaConsumerGroupService(baseConfig ++ Array("--group", g))
-      case None => createKafkaConsumerGroupService(baseConfig)
+      case Some(g) => createKafkaConsumerGroupService(baseConfig() ++ Array("--group", g))
+      case None => createKafkaConsumerGroupService(baseConfig())
     }
+  }
+
+  private def baseConfig(): Array[String] = {
+    var baseConfig: ArrayBuffer[String] = ArrayBuffer("--bootstrap-server", kafkaSettings.address)
+
+    if (!kafkaSettings.commandConfig.isEmpty) {
+      baseConfig ++= Array("--command-config", kafkaSettings.commandConfig)
+    }
+
+    baseConfig.toArray
   }
 
   def createKafkaConsumerGroupService(baseConfig: Array[String]): KafkaConsumerGroupService = {
