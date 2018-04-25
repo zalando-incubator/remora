@@ -19,6 +19,7 @@ lazy val gitSettings = Seq(
 
 lazy val root = (project in file("."))
   .settings(commonSettings)
+  .settings(dockerSettings)
   .settings(gitSettings)
   .enablePlugins(
     GitVersioning,
