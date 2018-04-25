@@ -3,14 +3,16 @@ import java.util.concurrent.TimeUnit
 
 import KafkaClientActor.{Command, DescribeKafkaClusterConsumer, ListConsumers}
 import akka.actor.{ActorRef, ActorSystem}
+import akka.dispatch.MessageDispatcher
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshalling._
 import akka.http.scaladsl.model.{HttpResponse, MediaTypes, StatusCodes}
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.{ExceptionHandler, StandardRoute}
+import akka.http.scaladsl.server.{ExceptionHandler, Route, StandardRoute}
 import akka.pattern.ask
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
+import backline.http.metrics.{HttpTimerMetrics, StatusCodeCounterDirectives, TimerDirectives}
 import com.codahale.metrics.MetricRegistry
 import com.codahale.metrics.health.HealthCheck.Result
 import com.codahale.metrics.json.MetricsModule
@@ -20,14 +22,18 @@ import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
 import models.{GroupInfo, Health}
 import play.api.libs.json._
 
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.reflect.ClassTag
 
 class Api(kafkaClientActorRef: ActorRef)
-         (implicit actorSystem: ActorSystem, materializer: ActorMaterializer)
-  extends nl.grons.metrics.scala.DefaultInstrumented with PlayJsonSupport {
+         (implicit actorSystem: ActorSystem, Materializer: ActorMaterializer)
+  extends StatusCodeCounterDirectives
+    with TimerDirectives
+    with nl.grons.metrics.scala.DefaultInstrumented
+    with PlayJsonSupport {
 
-  implicit val apiExecutionContext = actorSystem.dispatchers.lookup("api-dispatcher")
+  implicit val apiExecutionContext: MessageDispatcher = actorSystem.dispatchers.lookup("api-dispatcher")
 
   implicit def remoraExceptionHandler: ExceptionHandler =
     ExceptionHandler {
@@ -52,20 +58,23 @@ class Api(kafkaClientActorRef: ActorRef)
   private def askFor[RES](command: Command)(implicit tag: ClassTag[RES]) =
     (kafkaClientActorRef ? command).mapTo[RES]
 
-  val route =
-    redirectToNoTrailingSlashIfPresent(StatusCodes.Found) {
-      import JsonOps._
-
-      handleExceptions(remoraExceptionHandler) {
-        path("metrics") {
-          complete(metricRegistry)
-        } ~ path("health") {
-          healthCheck
-        } ~ pathPrefix("consumers") {
-          pathEnd {
-            complete(askFor[List[String]](ListConsumers).map(Json.toJson(_)))
-          } ~ path(Segment) { consumerGroup =>
-            complete(askFor[GroupInfo](DescribeKafkaClusterConsumer(consumerGroup)).map(Json.toJson(_)))
+  val route: Route =
+    withTimer {
+      withStatusCodeCounter {
+        redirectToNoTrailingSlashIfPresent(StatusCodes.Found) {
+          import JsonOps._
+          handleExceptions(remoraExceptionHandler) {
+            path("metrics") {
+              complete(metricRegistry)
+            } ~ path("health") {
+              healthCheck
+            } ~ pathPrefix("consumers") {
+              pathEnd {
+                complete(askFor[List[String]](ListConsumers).map(Json.toJson(_)))
+              } ~ path(Segment) { consumerGroup =>
+                complete(askFor[GroupInfo](DescribeKafkaClusterConsumer(consumerGroup)).map(Json.toJson(_)))
+              }
+            }
           }
         }
       }
@@ -85,7 +94,7 @@ class Api(kafkaClientActorRef: ActorRef)
     Health(health.isHealthy, health.getMessage, Option(health.getError))
   }
 
-  def start() = Http().bindAndHandle(route, "0.0.0.0", settings.port)
+  def start(): Future[Http.ServerBinding] = Http().bindAndHandle(route, "0.0.0.0", settings.port)
 }
 
 object Api {

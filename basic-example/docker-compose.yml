@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   zookeeper:
     image: wurstmeister/zookeeper
@@ -16,7 +16,10 @@ services:
       - "2181:2181"
 
   remora:
-    image: registry.opensource.zalan.do/machina/remora
+    # Built locally
+    image: remora
+#    latest from repo
+#    image: registry.opensource.zalan.do/machina/remora
     depends_on:
       - kafka
     hostname: remora
@@ -32,4 +35,4 @@ services:
 #        -Dcom.sun.management.jmxremote.local.only=false
 #        -Djava.rmi.server.hostname=localhost
     ports:
-      - "9000:9000"
+      - 9000:9000

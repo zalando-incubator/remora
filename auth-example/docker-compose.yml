@@ -1,5 +1,7 @@
 version: '3'
+
 services:
+
   zookeeper:
     image: 'bitnami/zookeeper:latest'
     environment:

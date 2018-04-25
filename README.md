@@ -38,8 +38,6 @@ To find the latest releases, please see the following examples
 
 `$ pierone latest machina remora --url registry.opensource.zalan.do` (Which would require a `$ pip3 install stups-pierone`)
 
-Also the latest tag is built automatically.
-
 ### Running it
 
 Images for all versions are available on [Zalando opensource pierone](http://registry.opensource.zalan.do)
@@ -50,9 +48,29 @@ They can be used as follows:
 docker run -it --rm -p 9000:9000 -e KAFKA_ENDPOINT=127.0.0.1:9092 registry.opensource.zalan.do/machina/remora
 ```
 
-For further examples see the [docker-compose.yml](docker-compose/docker-compose.yml)
+For further examples see the [docker-compose.yml](basic-example/docker-compose.yml)
+
+```bash
+docker-compose -f basic-example/docker-compose.yml up
+```
+
+Run remora in IDE with kafka and zookeeper run by docker-compose 
+
+```bash
+docker-compose -f basic-example/docker-compose.yml up --scale remora=0
+```
+
+Remora is stateless, so test the scale of the API
+
+```bash
+docker-compose -f scale-example/docker-compose.yml up --scale remora=3
+```
 
 For examples with broker authentication see the [docker-compose.yml](auth-example/docker-compose.yml)
+
+```bash
+docker-compose -f auth-example/docker-compose.yml up
+```
 
 ### Usage
 
@@ -303,7 +321,22 @@ $ curl http://localhost:9000/metrics
   "counters": {
     "KafkaClientActor.receiveCounter": {
       "count": 1443078
-    }
+    }, 
+    "foo.3.bar.GET-rejections": {
+      "count": 1
+    },
+    "foo.3bar.GET-rejections": {
+      "count": 1
+     },
+     "foo.4.bar.GET-rejections": {
+       "count": 1
+     },
+     "health.GET-2xx": {
+       "count": 1
+     },
+     "metrics.GET-2xx": {
+       "count": 5
+     }   
   },
   "histograms": {},
   "meters": {
@@ -373,7 +406,26 @@ $ curl http://localhost:9000/metrics
       "mean_rate": 0.016655133007592124,
       "duration_units": "milliseconds",
       "rate_units": "calls/second"
-    }
+    },
+    "metrics.GET": {
+      "count": 2,
+      "max": 174.712404,
+      "mean": 88.26670169568574,
+      "min": 4.375856,
+      "p50": 4.375856,
+      "p75": 174.712404,
+      "p95": 174.712404,
+      "p98": 174.712404,
+      "p99": 174.712404,
+      "p999": 174.712404,
+      "stddev": 85.15869346735195,
+      "m15_rate": 0,
+      "m1_rate": 0,
+      "m5_rate": 0,
+      "mean_rate": 0.6714371986436051,
+      "duration_units": "milliseconds",
+      "rate_units": "calls/second"
+      }
   }
 }
 ```
@@ -382,39 +434,39 @@ $ curl http://localhost:9000/metrics
 
 Additional configuration can be passed via the following environment variables:
 
-* SERVER_PORT - default `9000`
-* KAFKA_ENDPOINT - default `localhost:9092`
-* ACTOR_TIMEOUT - default `60 seconds`
-* AKKA_HTTP_SERVER_REQUEST_TIMEOUT - `default 60 seconds`
-* AKKA_HTTP_SERVER_IDLE_TIMEOUT - `default 60 seconds`
-* TO_REGISTRY - `default false` reports lag/offset/end to metricsRegistry
-* EXPORT_METRICS_INTERVAL_SECONDS - `default 20` interval to report lag/offset/end to metricsRegistry
+* **SERVER_PORT** - default `9000`
+* **KAFKA_ENDPOINT** - default `localhost:9092`
+* **ACTOR_TIMEOUT** - default `60 seconds`
+* **AKKA_HTTP_SERVER_REQUEST_TIMEOUT** - `default 60 seconds`
+* **AKKA_HTTP_SERVER_IDLE_TIMEOUT** - `default 60 seconds`
+* **TO_REGISTRY** - `default false` reports lag/offset/end to metricsRegistry
+* **EXPORT_METRICS_INTERVAL_SECONDS** - `default 20` interval to report lag/offset/end to metricsRegistry
 
 
 ### Configuring Remora with Cloudwatch
 
 The following environment variables can be used to configure reporting to Cloudwatch:
 
-* CLOUDWATCH_ON - `default false` reports metricsRegistry to cloudwatch, TO_REGISTRY will need to be switched on!
-* CLOUDWATCH_NAME - `default 'remora'` name to appear on cloudwatch
+* **CLOUDWATCH_ON** - `default false` reports metricsRegistry to cloudwatch, TO_REGISTRY will need to be switched on!
+* **CLOUDWATCH_NAME** - `default 'remora'` name to appear on cloudwatch
 
 ### Configuring Remora with Datadog
 
 The following environment variables can be used to configure reporting to Datadog:
 
-* DATADOG_ON - `default false` reports metricsRegistry to Datadog, TO_REGISTRY will need to be switched on!
-* DATADOG_NAME - `default 'remora'` name to appear on datadog
-* DATADOG_INTERVAL_MINUTES - `default '1'` The reporting interval, in minutes.
-* DATADOG_AGENT_HOST - `default 'localhost'` The host on which a Datadog agent is running.
-* DATADOG_AGENT_PORT - `default '8125'` The port of the Datadog agent.
-* DATADOG_CONSUMER_GROUPS - `default '[]'` List of consumer groups for which metrics will be sent to Datadog. An empty list means that all metrics will be sent.
+* **DATADOG_ON** - `default false` reports metricsRegistry to Datadog, TO_REGISTRY will need to be switched on!
+* **DATADOG_NAME** - `default 'remora'` name to appear on datadog
+* **DATADOG_INTERVAL_MINUTES** - `default '1'` The reporting interval, in minutes.
+* **DATADOG_AGENT_HOST** - `default 'localhost'` The host on which a Datadog agent is running.
+* **DATADOG_AGENT_PORT** - `default '8125'` The port of the Datadog agent.
+* **DATADOG_CONSUMER_GROUPS** - `default '[]'` List of consumer groups for which metrics will be sent to Datadog. An empty list means that all metrics will be sent.
 
 __Reporting to datadog agent__:
 
 Reporting to Datadog is done via [DogStatsD](https://docs.datadoghq.com/guides/dogstatsd/), which is usually running on the same host as remora.
 However, as Remora is running inside a docker container, some steps are required to make the integration:
 
-* Set `DATADOG_AGENT_HOST` as the address of the docker host on your machine
+* Set **DATADOG_AGENT_HOST** as the address of the docker host on your machine
 * In the datadog agent configuration, set `non_local_traffic: yes`
 
 This way, a docker container running Remora will be able to communicate with a Datadog agent on the host machine.
@@ -428,16 +480,10 @@ This way, a docker container running Remora will be able to communicate with a D
 
 ### Build
 
-Create docker image:
+Create docker image locally. However the image that gets built will be `remora:<TAG-GITCOMMIT>`
 
 ```bash
 $ sbt docker:publishLocal
-```
-
-Docker compose
-
-```bash
-$ docker-compose up
 ```
 
 ## Contributing
