@@ -19,7 +19,6 @@ lazy val gitSettings = Seq(
 
 lazy val root = (project in file("."))
   .settings(commonSettings)
-  .settings(dockerSettings)
   .settings(gitSettings)
   .enablePlugins(
     GitVersioning,
@@ -31,6 +30,8 @@ ivyScala := ivyScala.value map {
   _.copy(overrideScalaVersion = true)
 }
 
+resolvers ++= Seq("bintray-backline-open-source-releases" at "https://dl.bintray.com/backline/open-source")
+
 libraryDependencies ++= Seq(
   "ch.qos.logback"                %  "logback-classic"              % "1.1.10",
   "de.heikoseeberger"             %% "akka-http-play-json"          % "1.15.0",
@@ -39,6 +40,7 @@ libraryDependencies ++= Seq(
   "io.dropwizard.metrics"         %  "metrics-jvm"                  % "3.1.2",
   "com.blacklocus"                % "metrics-cloudwatch"            % "0.4.0",
   "org.coursera"                  % "dropwizard-metrics-datadog"    % "1.1.13",
+  "backline"                      %% "akka-http-metrics"            % "1.0.0",
   "com.amazonaws"                 % "aws-java-sdk"                  % "1.11.189",
   "com.typesafe.scala-logging"    %% "scala-logging"                % "3.7.2",
   "com.typesafe.akka"             %% "akka-actor"                   % "2.4.17",
