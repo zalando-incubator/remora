@@ -59,7 +59,12 @@ libraryDependencies ++= Seq(
   "org.scalatest"                 %% "scalatest"                    % "2.2.4"   % "test",
   "org.scalamock"                 %% "scalamock-scalatest-support"  % "3.6.0"   % "test",
   "net.manub"                     %% "scalatest-embedded-kafka"     % "1.0.0"   % "test"
-).map(_.exclude("org.slf4j", "slf4j-log4j12"))
+)
+
+excludeDependencies ++= Seq(
+  "org.slf4j" % "slf4j-log4j12",
+  "log4j"     % "log4j"
+)
 
 assemblyMergeStrategy in assembly := {
   case PathList("org", "apache", "commons", "logging", xs @ _*) => MergeStrategy.first
