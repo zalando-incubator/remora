@@ -58,7 +58,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka"             %% "akka-http-testkit"            % "10.0.5"  % "test",
   "org.scalatest"                 %% "scalatest"                    % "2.2.4"   % "test",
   "org.scalamock"                 %% "scalamock-scalatest-support"  % "3.6.0"   % "test",
-  "net.manub"                     %% "scalatest-embedded-kafka"     % "1.0.0"   % "test"
+  "net.manub"                     %% "scalatest-embedded-kafka"     % "1.1.0"   % "test"
 )
 
 excludeDependencies ++= Seq(
