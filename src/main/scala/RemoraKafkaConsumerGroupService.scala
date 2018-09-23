@@ -59,7 +59,7 @@ class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
     describeTimer.time {
       val kafkaConsumerGroupService = createKafkaConsumerGroupService(Some(group))
       try {
-        val (state, assignments) = kafkaConsumerGroupService.describeGroup()
+        val (state, assignments) = kafkaConsumerGroupService.collectGroupOffsets()
         assignments match {
           case Some(partitionAssignmentStates) =>
             val assignments = Some(partitionAssignmentStates.map(a => PartitionAssignmentState(a.group,
