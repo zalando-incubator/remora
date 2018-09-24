@@ -54,11 +54,11 @@ libraryDependencies ++= Seq(
   "org.slf4j"                     % "log4j-over-slf4j"              % "1.7.22",
   "org.scalaz"                    %% "scalaz-core"                  % "7.2.8",
   "com.typesafe.play"             %% "play-json"                    % "2.6.2",
-  "org.apache.kafka"              %% "kafka"                        % "1.0.0",
+  "org.apache.kafka"              %% "kafka"                        % "1.1.1",
   "com.typesafe.akka"             %% "akka-http-testkit"            % "10.0.5"  % "test",
   "org.scalatest"                 %% "scalatest"                    % "2.2.4"   % "test",
   "org.scalamock"                 %% "scalamock-scalatest-support"  % "3.6.0"   % "test",
-  "net.manub"                     %% "scalatest-embedded-kafka"     % "1.0.0"   % "test"
+  "net.manub"                     %% "scalatest-embedded-kafka"     % "1.1.0"   % "test"
 )
 
 excludeDependencies ++= Seq(
