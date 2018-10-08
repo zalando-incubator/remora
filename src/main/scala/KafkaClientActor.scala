@@ -1,7 +1,8 @@
 import KafkaClientActor.{DescribeKafkaClusterConsumer, ListConsumers}
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.pattern.pipe
-import nl.grons.metrics.scala.{ReceiveExceptionMeterActor, ReceiveTimerActor, ReceiveCounterActor, ActorInstrumentedLifeCycle}
+import kafka.admin.RemoraKafkaConsumerGroupService
+import nl.grons.metrics.scala.{ActorInstrumentedLifeCycle, ReceiveCounterActor, ReceiveExceptionMeterActor, ReceiveTimerActor}
 
 object KafkaClientActor {
 

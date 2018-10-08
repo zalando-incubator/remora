@@ -26,7 +26,7 @@ We created Remora after spending some time using Linkedin's [burrow](https://git
 
 ### Dependencies
 
-The latest release of [Remora](https://github.com/zalando-incubator/remora) supports [Apache Kafka](http://kafka.apache.org/) 0.10.2.1 and 1.0.0.
+The latest release of [Remora](https://github.com/zalando-incubator/remora) supports [Apache Kafka](http://kafka.apache.org/) 0.10.2.1, 1.0.0 and 1.1.1.
 
 * For [Apache Kafka](http://kafka.apache.org/) 0.10.0.1 please see the [v0.1.0 release](https://github.com/zalando-incubator/remora/releases/tag/v0.1.0).
 * For [Apache Kafka](http://kafka.apache.org/) 0.10.2.1 please see the [v0.2.0 release](https://github.com/zalando-incubator/remora/releases/tag/v0.2.0).
@@ -431,7 +431,7 @@ $ curl http://localhost:9000/metrics
 }
 ```
 
-## Configuring it
+## Configuring Remora
 
 Additional configuration can be passed via the following environment variables:
 
@@ -467,7 +467,7 @@ __Reporting to datadog agent__:
 Reporting to Datadog is done via [DogStatsD](https://docs.datadoghq.com/guides/dogstatsd/), which is usually running on the same host as remora.
 However, as Remora is running inside a docker container, some steps are required to make the integration:
 
-* Set **DATADOG_AGENT_HOST** as the address of the docker host on your machine
+* Set **DATADOG_AGENT_HOST** as the address of the host on your machine
 * In the datadog agent configuration, set `non_local_traffic: yes`
 
 This way, a docker container running Remora will be able to communicate with a Datadog agent on the host machine.
@@ -481,7 +481,7 @@ This way, a docker container running Remora will be able to communicate with a D
 
 ### Build
 
-Create docker image locally. However the image that gets built will be `remora:<TAG-GITCOMMIT>`
+Create docker image locally. The image will be built to `remora:<TAG-GITCOMMIT>` and `latest`
 
 ```bash
 $ sbt docker:publishLocal

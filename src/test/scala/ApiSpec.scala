@@ -3,7 +3,6 @@ import java.util.Properties
 import config.KafkaSettings
 
 import scala.concurrent.duration._
-
 import com.typesafe.config.ConfigValueFactory
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.common.serialization.Deserializer
@@ -11,12 +10,12 @@ import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import org.slf4j.LoggerFactory
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
 import akka.testkit.{TestActorRef, TestKit}
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
+import kafka.admin.RemoraKafkaConsumerGroupService
 import net.manub.embeddedkafka.Codecs.stringDeserializer
 import net.manub.embeddedkafka.{EmbeddedKafka, EmbeddedKafkaConfig}
 import play.api.libs.json._
