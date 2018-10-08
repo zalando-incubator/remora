@@ -9,6 +9,7 @@ import com.blacklocus.metrics.CloudWatchReporterBuilder
 import com.codahale.metrics.jvm.{GarbageCollectorMetricSet, MemoryUsageGaugeSet, ThreadStatesGaugeSet}
 import com.typesafe.scalalogging.LazyLogging
 import config.{KafkaSettings, MetricsSettings}
+import kafka.admin.RemoraKafkaConsumerGroupService
 import reporter.RemoraDatadogReporter
 
 import scala.concurrent.duration._

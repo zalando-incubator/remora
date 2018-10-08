@@ -1,8 +1,9 @@
+package kafka.admin
+
 import java.util.logging.Logger
 
 import config.KafkaSettings
-import kafka.admin.ConsumerGroupCommand
-import kafka.admin.ConsumerGroupCommand.{ConsumerGroupCommandOptions, KafkaConsumerGroupService}
+import kafka.admin.ConsumerGroupCommand.ConsumerGroupCommandOptions
 import models.{GroupInfo, Node, PartitionAssignmentState}
 
 import scala.collection.mutable.ArrayBuffer
@@ -23,7 +24,7 @@ class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
   private val listTimer = metrics.timer("list-timer")
   private val describeTimer = metrics.timer("describe-timer")
 
-  private def createKafkaConsumerGroupService(groupId: Option[String] = None): ConsumerGroupCommand.KafkaConsumerGroupService = {
+  private def createKafkaConsumerGroupService(groupId: Option[String] = None): ConsumerGroupCommand.ConsumerGroupService = {
     groupId match {
       case Some(g) => createKafkaConsumerGroupService(baseConfig() ++ Array("--group", g))
       case None => createKafkaConsumerGroupService(baseConfig())
@@ -40,8 +41,8 @@ class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
     baseConfig.toArray
   }
 
-  def createKafkaConsumerGroupService(baseConfig: Array[String]): KafkaConsumerGroupService = {
-    new KafkaConsumerGroupService(new ConsumerGroupCommandOptions(baseConfig))
+  def createKafkaConsumerGroupService(baseConfig: Array[String]): ConsumerGroupCommand.ConsumerGroupService = {
+    new ConsumerGroupCommand.ConsumerGroupService(new ConsumerGroupCommandOptions(baseConfig))
   }
 
   def list(): Future[List[String]] = Future {

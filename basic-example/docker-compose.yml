@@ -1,19 +1,23 @@
-version: '3'
+version: '3.2'
 services:
+
   zookeeper:
     image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
 
   kafka:
-    image: wurstmeister/kafka:1.0.0
-    hostname: kafka
+    image: wurstmeister/kafka:2.11-2.0.0
+    ports:
+      - target: 9092
+        published: 9092
+        protocol: tcp
+        mode: host
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ADVERTISED_HOST_NAME: $LOCAL_IP
       KAFKA_ADVERTISED_PORT: 9092
       KAFKA_CREATE_TOPICS: "test-0:1:1,test-1:1:1"
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-    ports:
-      - "9092:9092"
-      - "2181:2181"
 
   remora:
     # Built locally
@@ -22,7 +26,6 @@ services:
 #    image: registry.opensource.zalan.do/machina/remora
     depends_on:
       - kafka
-    hostname: remora
     environment:
       KAFKA_ENDPOINT: "kafka:9092"
 #      JAVA_OPTS:
