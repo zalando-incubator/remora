@@ -32,6 +32,7 @@ The latest release of [Remora](https://github.com/zalando-incubator/remora) supp
 * For [Apache Kafka](http://kafka.apache.org/) 0.10.2.1 please see the [v0.2.0 release](https://github.com/zalando-incubator/remora/releases/tag/v0.2.0).
 * For [Apache Kafka](http://kafka.apache.org/) 1.0.0 please see the [v1.0.5 release](https://github.com/zalando-incubator/remora/releases/tag/v1.0.5).
 * For [Apache Kafka](http://kafka.apache.org/) 1.1.1 please see the [v1.0.6 release](https://github.com/zalando-incubator/remora/releases/tag/v1.0.6).
+* For [Apache Kafka](http://kafka.apache.org/) 2X please see the [v1.0.7 release](https://github.com/zalando-incubator/remora/releases/tag/v1.0.7).
 
 To find the latest releases, please see the following examples
 
