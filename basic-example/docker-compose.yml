@@ -14,8 +14,10 @@ services:
         protocol: tcp
         mode: host
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: $LOCAL_IP
-      KAFKA_ADVERTISED_PORT: 9092
+      # To connect to kafka from the outside use
+      #'docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' kafka_container_id'
+      # to get the ip address to connect to kafka from the outside of the docker compose network
+      KAFKA_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_CREATE_TOPICS: "test-0:1:1,test-1:1:1"
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
 
