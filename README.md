@@ -26,7 +26,7 @@ We created Remora after spending some time using Linkedin's [burrow](https://git
 
 ### Dependencies
 
-The latest release of [Remora](https://github.com/zalando-incubator/remora) supports [Apache Kafka](http://kafka.apache.org/) 0.10.2.1, 1.0.0 and 1.1.1.
+The latest release of [Remora](https://github.com/zalando-incubator/remora) supports [Apache Kafka](http://kafka.apache.org/) 0.10.2.1, 1.0.0, 1.1.1 and 2X
 
 * For [Apache Kafka](http://kafka.apache.org/) 0.10.0.1 please see the [v0.1.0 release](https://github.com/zalando-incubator/remora/releases/tag/v0.1.0).
 * For [Apache Kafka](http://kafka.apache.org/) 0.10.2.1 please see the [v0.2.0 release](https://github.com/zalando-incubator/remora/releases/tag/v0.2.0).
