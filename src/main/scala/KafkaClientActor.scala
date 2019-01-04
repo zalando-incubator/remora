@@ -1,4 +1,4 @@
-import KafkaClientActor.{DescribeKafkaClusterConsumer, ListConsumers}
+import KafkaClientActor.{DescribeKafkaCluster, DescribeKafkaConsumerGroup, ListConsumers}
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.pattern.pipe
 import kafka.admin.RemoraKafkaConsumerGroupService
@@ -8,7 +8,8 @@ object KafkaClientActor {
 
   sealed trait Command
 
-  case class DescribeKafkaClusterConsumer(consumerGroupName: String) extends Command
+  case class DescribeKafkaConsumerGroup(consumerGroupName: String) extends Command
+  object DescribeKafkaCluster extends Command
   object ListConsumers extends Command
 
   def props(kafkaConsumerGroupService: RemoraKafkaConsumerGroupService) = Props(classOf[KafkaClientActor], kafkaConsumerGroupService)
@@ -16,13 +17,15 @@ object KafkaClientActor {
 }
 
 class BaseKafkaClientActor(kafkaConsumerGroupService: RemoraKafkaConsumerGroupService) extends Actor with ActorLogging
-with nl.grons.metrics.scala.DefaultInstrumented with ActorInstrumentedLifeCycle {
+  with nl.grons.metrics.scala.DefaultInstrumented with ActorInstrumentedLifeCycle {
 
   import context.dispatcher
 
   def receive: Receive = {
-
-    case DescribeKafkaClusterConsumer(consumerGroupName) =>
+    case DescribeKafkaCluster =>
+      log.info(s"Received request for cluster description")
+      kafkaConsumerGroupService.describeCluster() pipeTo sender
+    case DescribeKafkaConsumerGroup(consumerGroupName) =>
       log.info(s"Received request for $consumerGroupName")
       kafkaConsumerGroupService.describeConsumerGroup(consumerGroupName) pipeTo sender
     case ListConsumers =>

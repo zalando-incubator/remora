@@ -89,7 +89,7 @@ class ApiSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Scalate
   "GET" should "return a 200 to /health" in {
     Get("/health") ~> ApiTest.route ~> check {
       status should be(OK)
-      entityAs[String] should be("\"OK\"")
+      entityAs[String] should be("OK")
     }
   }
 }

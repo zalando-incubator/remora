@@ -5,6 +5,7 @@ import java.util.logging.Logger
 import config.KafkaSettings
 import kafka.admin.ConsumerGroupCommand.ConsumerGroupCommandOptions
 import models.{GroupInfo, Node, PartitionAssignmentState}
+import org.apache.kafka.clients.admin
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -12,6 +13,7 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
 trait ConsumerGroupService {
   def list(): Future[List[String]]
 
+  def describeCluster(): Future[admin.DescribeClusterResult]
   def describeConsumerGroup(group: String): Future[GroupInfo]
 }
 
@@ -23,6 +25,7 @@ class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
 
   private val listTimer = metrics.timer("list-timer")
   private val describeTimer = metrics.timer("describe-timer")
+  private val describeGroupTimer = metrics.timer("describe-group-timer")
 
   private def createKafkaConsumerGroupService(groupId: Option[String] = None): ConsumerGroupCommand.ConsumerGroupService = {
     groupId match {
@@ -41,23 +44,29 @@ class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
     baseConfig.toArray
   }
 
-  def createKafkaConsumerGroupService(baseConfig: Array[String]): ConsumerGroupCommand.ConsumerGroupService = {
-    new ConsumerGroupCommand.ConsumerGroupService(new ConsumerGroupCommandOptions(baseConfig))
+  def createKafkaConsumerGroupService(consumerGroupCommandArgs: Array[String]): ConsumerGroupCommand.ConsumerGroupService = {
+    new ConsumerGroupCommand.ConsumerGroupService(new ConsumerGroupCommandOptions(consumerGroupCommandArgs))
   }
 
-  def list(): Future[List[String]] = Future {
+  override def describeCluster(): Future[admin.DescribeClusterResult] = Future {
+    describeTimer.time {
+      kafkaSettings.adminClient.describeCluster()
+    }
+  }
+
+  override def list(): Future[List[String]] = Future {
     listTimer.time {
-      val adminClient = createKafkaConsumerGroupService()
+      val groupService = createKafkaConsumerGroupService()
       try {
-        adminClient.listGroups()
+        groupService.listGroups()
       } finally {
-        adminClient.close()
+        groupService.close()
       }
     }
   }
 
-  def describeConsumerGroup(group: String): Future[GroupInfo] = Future {
-    describeTimer.time {
+  override def describeConsumerGroup(group: String): Future[GroupInfo] = Future {
+    describeGroupTimer.time {
       val kafkaConsumerGroupService = createKafkaConsumerGroupService(Some(group))
       try {
         val (state, assignments) = kafkaConsumerGroupService.collectGroupOffsets()
