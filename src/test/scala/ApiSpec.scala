@@ -4,7 +4,7 @@ import config.KafkaSettings
 
 import scala.concurrent.duration._
 import com.typesafe.config.ConfigValueFactory
-import org.apache.kafka.clients.consumer.ConsumerRecords
+import org.apache.kafka.clients.consumer.{ConsumerConfig, ConsumerRecords, OffsetResetStrategy}
 import org.apache.kafka.common.serialization.Deserializer
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -20,6 +20,7 @@ import kafka.admin.RemoraKafkaConsumerGroupService
 import models.{KafkaClusterHealthResponse, Node}
 import net.manub.embeddedkafka.Codecs.stringDeserializer
 import net.manub.embeddedkafka.{EmbeddedKafka, EmbeddedKafkaConfig}
+import org.apache.kafka.clients.CommonClientConfigs
 import play.api.libs.json._
 
 class ApiSpec extends FlatSpec with Matchers with BeforeAndAfterAll with ScalatestRouteTest with PlayJsonSupport with Eventually {
@@ -43,9 +44,9 @@ class ApiSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Scalate
 
   val consumerProps: Properties = {
     val props = new Properties()
-    props.put("group.id", consumerGroup)
-    props.put("bootstrap.servers", kafkaHost)
-    props.put("auto.offset.reset", "earliest")
+    props.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroup)
+    props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, kafkaHost)
+    props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, OffsetResetStrategy.EARLIEST.toString.toLowerCase)
     props
   }
 
@@ -94,7 +95,7 @@ class ApiSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Scalate
       contentType should be(ContentTypes.`application/json`)
 
       import scala.collection.JavaConverters._
-      import JsonOps.clusterHealthWrites
+      import JsonOps.clusterHealthReads
 
       val clusterDesc = kafkaSettings.adminClient.describeCluster
 
@@ -104,7 +105,13 @@ class ApiSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Scalate
       val nodes = clusterDesc.nodes.get(waitFor.length, waitFor.unit).asScala
 
       val resp = KafkaClusterHealthResponse(clusterId, Node.from(controller), nodes.map(Node.from).toSeq)
-      entityAs[JsValue] should be(Json.toJson(resp))
+      val entity = Json.fromJson[KafkaClusterHealthResponse](entityAs[JsValue])
+
+      assert(entity.isSuccess)
+      entity.get.clusterId should be(resp.clusterId)
+      entity.get.controller should be(resp.controller)
+      entity.get.nodes.length should be(1)
+      entity.get.nodes should be(resp.nodes)
     }
   }
 }
