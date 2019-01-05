@@ -1,4 +1,4 @@
-import models.{GroupInfo, Node, PartitionAssignmentState}
+import models.{GroupInfo, KafkaClusterHealthResponse, Node, PartitionAssignmentState}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -11,6 +11,13 @@ object JsonOps {
       (__ \ "port").writeNullable[Int] and
       (__ \ "rack").writeNullable[String]
     ) (unlift(Node.unapply))
+
+  implicit val clusterHealthWrites: Writes[KafkaClusterHealthResponse] = (
+    (__ \ "cluster_id").write[String] and
+      (__ \ "controller").write[Node] and
+      (__ \ "nodes").write[Seq[Node]]
+    ) (unlift(KafkaClusterHealthResponse.unapply)
+  )
 
   implicit val partitionAssignmentStateWrites: Writes[PartitionAssignmentState] = (
     (__ \ "group").write[String] and

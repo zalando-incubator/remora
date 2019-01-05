@@ -5,7 +5,12 @@ package object models {
 
   case class GroupInfo(state: Option[String] = None, partitionAssignmentStates: Option[Seq[PartitionAssignmentState]] = None, lagPerTopic: Option[Map[String, Long]] = None)
 
+  object Node {
+    def from(n: org.apache.kafka.common.Node): Node = Node(Some(n.id), Some(n.idString), Some(n.host), Some(n.port), Some(n.rack))
+  }
   case class Node(id: Option[Int] = None, idString: Option[String] = None, host: Option[String] = None, port: Option[Int] = None, rack: Option[String] = None)
+
+  case class KafkaClusterHealthResponse(clusterId: String, controller: Node, nodes: Seq[Node])
 
   //This is a copy of the object inside the KafkaConsumerGroupService which is protected
   case class PartitionAssignmentState(group: String, coordinator: Option[Node] = None, topic: Option[String] = None,
