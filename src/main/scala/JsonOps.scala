@@ -12,12 +12,25 @@ object JsonOps {
       (__ \ "rack").writeNullable[String]
     ) (unlift(Node.unapply))
 
+  implicit val nodeReads: Reads[Node] = (
+    (__ \ "id").readNullable[Int] and
+      (__ \ "id_string").readNullable[String] and
+      (__ \ "host").readNullable[String] and
+      (__ \ "port").readNullable[Int] and
+      (__ \ "rack").readNullable[String]
+    ) (Node.apply _)
+
   implicit val clusterHealthWrites: Writes[KafkaClusterHealthResponse] = (
     (__ \ "cluster_id").write[String] and
       (__ \ "controller").write[Node] and
       (__ \ "nodes").write[Seq[Node]]
-    ) (unlift(KafkaClusterHealthResponse.unapply)
-  )
+    ) (unlift(KafkaClusterHealthResponse.unapply))
+
+  implicit val clusterHealthReads: Reads[KafkaClusterHealthResponse] = (
+    (__ \ "cluster_id").read[String] and
+      (__ \ "controller").read[Node] and
+      (__ \ "nodes").lazyRead(Reads.seq[Node])
+    ) (KafkaClusterHealthResponse.apply _)
 
   implicit val partitionAssignmentStateWrites: Writes[PartitionAssignmentState] = (
     (__ \ "group").write[String] and
