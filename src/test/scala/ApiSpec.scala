@@ -11,11 +11,13 @@ import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import org.slf4j.LoggerFactory
 import akka.actor.ActorSystem
+import akka.http.scaladsl.model.ContentTypes
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
 import akka.testkit.{TestActorRef, TestKit}
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
 import kafka.admin.RemoraKafkaConsumerGroupService
+import models.{KafkaClusterHealthResponse, Node}
 import net.manub.embeddedkafka.Codecs.stringDeserializer
 import net.manub.embeddedkafka.{EmbeddedKafka, EmbeddedKafkaConfig}
 import play.api.libs.json._
@@ -86,10 +88,23 @@ class ApiSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Scalate
     }
   }
 
-  "GET" should "return a 200 to /health" in {
+  "GET" should "return a 200 with cluster JSON info to /health" in {
     Get("/health") ~> ApiTest.route ~> check {
       status should be(OK)
-      entityAs[String] should be("OK")
+      contentType should be(ContentTypes.`application/json`)
+
+      import scala.collection.JavaConverters._
+      import JsonOps.clusterHealthWrites
+
+      val clusterDesc = kafkaSettings.adminClient.describeCluster
+
+      val waitFor = patienceConfig.timeout
+      val clusterId = clusterDesc.clusterId.get(waitFor.length, waitFor.unit)
+      val controller = clusterDesc.controller.get(waitFor.length, waitFor.unit)
+      val nodes = clusterDesc.nodes.get(waitFor.length, waitFor.unit).asScala
+
+      val resp = KafkaClusterHealthResponse(clusterId, Node.from(controller), nodes.map(Node.from).toSeq)
+      entityAs[JsValue] should be(Json.toJson(resp))
     }
   }
 }

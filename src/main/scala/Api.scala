@@ -1,6 +1,7 @@
 
 import java.util.concurrent.TimeUnit
 
+import JsonOps._
 import KafkaClientActor.{Command, DescribeKafkaCluster, DescribeKafkaConsumerGroup, ListConsumers}
 import akka.actor.{ActorRef, ActorSystem}
 import akka.dispatch.MessageDispatcher
@@ -14,17 +15,17 @@ import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import backline.http.metrics.{StatusCodeCounterDirectives, TimerDirectives}
 import com.codahale.metrics.MetricRegistry
-import com.codahale.metrics.health.HealthCheck.Result
 import com.codahale.metrics.json.MetricsModule
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
-import models.{GroupInfo, Health}
+import models.{GroupInfo, KafkaClusterHealthResponse}
 import org.apache.kafka.clients.admin.DescribeClusterResult
 import play.api.libs.json._
 
-import scala.concurrent.{Await, Future, TimeoutException}
+import scala.collection.JavaConverters._
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.reflect.ClassTag
 
@@ -65,7 +66,6 @@ class Api(kafkaClientActorRef: ActorRef)
     withTimer {
       withStatusCodeCounter {
         redirectToNoTrailingSlashIfPresent(StatusCodes.Found) {
-          import JsonOps._
           handleExceptions(remoraExceptionHandler) {
             path("metrics") {
               complete(metricRegistry)
@@ -84,37 +84,26 @@ class Api(kafkaClientActorRef: ActorRef)
     }
 
   def healthCheck: StandardRoute = {
-    getHealth match {
-      case Health(true, message, None) => complete(message)
-      case Health(false, _, Some(e)) => failWith(e)
-    }
-  }
+    val checkDuration = timeoutDuration.duration
+    val clusterHealthFuture = askFor[DescribeClusterResult](DescribeKafkaCluster).map { clusterDesc =>
+      val clusterId = clusterDesc.clusterId.get(checkDuration.length, checkDuration.unit)
+      val controller = clusterDesc.controller.get(checkDuration.length, checkDuration.unit)
+      val clusterNodes = clusterDesc.nodes.get(checkDuration.length, checkDuration.unit).asScala
+      logger.debug(s"clusterId: $clusterId; controller: $controller; nodes: $clusterNodes")
 
-  def getHealth: Health = {
-    val health = healthCheck("Health") {
-
-      val checkDuration = timeoutDuration.duration
-      val healthFuture = askFor[DescribeClusterResult](DescribeKafkaCluster).map { clusterDesc =>
-          val clusterNodes = clusterDesc.nodes.get(checkDuration.length, checkDuration.unit)
-          val clusterId = clusterDesc.clusterId.get(checkDuration.length, checkDuration.unit)
-          logger.debug(s"clusterId: $clusterId; nodes: $clusterNodes")
-
-          val clusterIdAvailable: Boolean = Option(clusterId).isDefined
-          if (clusterIdAvailable && !clusterNodes.isEmpty) {
-            Result.healthy("OK")
-          } else {
-            Result.unhealthy("Error connecting to Kafka Cluster")
-          }
-        }
-
-      try {
-        Await.result[Result](healthFuture, checkDuration)
-      } catch {
-        case e: TimeoutException => Result.unhealthy("Error connecting to Kafka Cluster")
+      val clusterIdAvailable: Boolean = Option(clusterId).isDefined
+      if (clusterIdAvailable && clusterNodes.nonEmpty) {
+        val resp = KafkaClusterHealthResponse(
+          clusterId,
+          models.Node.from(controller),
+          clusterNodes.map(models.Node.from).toSeq
+        )
+        Json.toJson(resp)
+      } else {
+        Json.toJson("Error connecting to Kafka Cluster")
       }
-
-    }.execute()
-    Health(health.isHealthy, health.getMessage, Option(health.getError))
+    }
+    complete(clusterHealthFuture)
   }
 
   def start(): Future[Http.ServerBinding] = Http().bindAndHandle(route, "0.0.0.0", settings.port)
