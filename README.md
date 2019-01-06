@@ -135,7 +135,23 @@ $ curl http://localhost:9000/consumers/<ConsumerGroupId>
 
 ```bash
 $ curl http://localhost:9000/health
-OK
+{
+    "cluster_id": "foobar_123",
+    "controller": {
+        "host": "xx.xxx.xxx.xxx",
+        "id": 0,
+        "id_string": "0",
+        "port": 9092
+    },
+    "nodes": [
+        {
+            "host": "xx.xxx.xxx.xxx",
+            "id": 0,
+            "id_string": "0",
+            "port": 9092
+        }
+    ]
+}
 ```
 
 ### Metrics
