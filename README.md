@@ -8,7 +8,7 @@ Remora is stable and **production ready**. A number of production kafka clusters
 
 ## Inspiration
 
-We created Remora after spending some time using Linkedin's [burrow](https://github.com/linkedin/Burrow) application for monitoring consumer lag and experiencing some performance problems. Remora provides the [Kafka consumer group command](https://github.com/apache/kafka/blob/0.10.0/core/src/main/scala/kafka/admin/ConsumerGroupCommand.scala) as an HTTP endpoint.
+We created Remora after spending some time using Linkedin's [burrow](https://github.com/linkedin/Burrow) application for monitoring consumer lag and experiencing some performance problems (burrow shut down after an unknown amount with no error stack, alert or sign of error. We have no idea why but we had to keep restarting the app which was very annoying). Remora provides the [Kafka consumer group command](https://github.com/apache/kafka/blob/0.10.0/core/src/main/scala/kafka/admin/ConsumerGroupCommand.scala) as an HTTP endpoint.
 
 ## User Testimonials 
 
