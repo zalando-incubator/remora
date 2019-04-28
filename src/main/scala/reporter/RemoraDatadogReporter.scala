@@ -23,12 +23,12 @@ class RemoraDatadogReporter(metricRegistry: MetricRegistry, datadogConfig: DataD
     }
   }
 
-  private def metricNameFormatter(removeTagsFromMetricName: Boolean): MetricNameFormatter = new MetricNameFormatter {
+  private def metricNameFormatter(remove_tags_from_metric_name: Boolean): MetricNameFormatter = new MetricNameFormatter {
     override def format(nameWithPrefix: String, path: String*): String = {
       RegistryKafkaMetric.decode(nameWithPrefix.replaceFirst(s"${datadogConfig.name}\\.","")) match {
         case Some(registryKafkaMetric) =>
           val builder = new TaggedNameBuilder().metricName(
-            if (removeTagsFromMetricName) buildNameWithoutTags(registryKafkaMetric) else nameWithPrefix
+            if (remove_tags_from_metric_name) buildNameWithoutTags(registryKafkaMetric) else nameWithPrefix
           ).addTag("topic", registryKafkaMetric.topic)
             .addTag("group", registryKafkaMetric.group)
           registryKafkaMetric.partition.foreach(p => builder.addTag("partition", p))
@@ -46,7 +46,7 @@ class RemoraDatadogReporter(metricRegistry: MetricRegistry, datadogConfig: DataD
     .withPrefix(datadogConfig.name)
     .withTransport(transport)
     .filter(kafkaConsumerGroupFilter)
-    .withMetricNameFormatter(metricNameFormatter(datadogConfig.removeTagsFromMetricName))
+    .withMetricNameFormatter(metricNameFormatter(datadogConfig.remove_tags_from_metric_name))
     .build
     .start(datadogConfig.intervalMinutes, TimeUnit.MINUTES)
 }
