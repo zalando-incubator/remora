@@ -12,7 +12,7 @@ case class DataDog(enabled: Boolean = false,
                    agentHost: String,
                    agentPort: Int,
                    trackedConsumerGroups: List[String],
-                   remove_tags_from_metric_name: Boolean)
+                   removeTagsFromMetricName: Boolean)
 
 case class MetricsSettings(cloudWatch: CloudWatch, dataDog: DataDog, registryOptions: RegistryOptions)
 

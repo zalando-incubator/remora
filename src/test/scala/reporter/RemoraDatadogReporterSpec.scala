@@ -11,8 +11,8 @@ class RemoraDatadogReporterSpec extends FlatSpec with Matchers with PrivateMetho
 
   private val metricRegistry: MetricRegistry = new MetricRegistry
   private val metric: Metric = mock[Metric]
-  private val config = DataDog(enabled = true, "test", 1, "localhost", 8125, List.empty, remove_tags_from_metric_name = false)
-  private val configRemoveTags = DataDog(enabled = true, "test", 1, "localhost", 8125, List.empty, remove_tags_from_metric_name = true)
+  private val config = DataDog(enabled = true, "test", 1, "localhost", 8125, List.empty, removeTagsFromMetricName = false)
+  private val configRemoveTags = DataDog(enabled = true, "test", 1, "localhost", 8125, List.empty, removeTagsFromMetricName = true)
 
   "Metrics filter" should "match any metric when no filter is given" in {
     val filter = buildMetricFilter(List.empty)
@@ -71,6 +71,6 @@ class RemoraDatadogReporterSpec extends FlatSpec with Matchers with PrivateMetho
 
   private def getMetricNameFormatter(config: DataDog): MetricNameFormatter = {
     val reporter = new RemoraDatadogReporter(metricRegistry, config)
-    reporter invokePrivate PrivateMethod[MetricNameFormatter]('metricNameFormatter)(config.remove_tags_from_metric_name)
+    reporter invokePrivate PrivateMethod[MetricNameFormatter]('metricNameFormatter)(config.removeTagsFromMetricName)
   }
 }
