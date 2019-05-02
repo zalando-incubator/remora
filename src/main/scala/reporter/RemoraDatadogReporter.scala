@@ -11,7 +11,6 @@ import org.coursera.metrics.datadog.{DatadogReporter, MetricNameFormatter}
 
 class RemoraDatadogReporter(metricRegistry: MetricRegistry, datadogConfig: DataDog) {
 
-
   private val transport = new UdpTransport.Builder().withStatsdHost(datadogConfig.agentHost).withPort(datadogConfig.agentPort).build
 
   /**
@@ -24,12 +23,13 @@ class RemoraDatadogReporter(metricRegistry: MetricRegistry, datadogConfig: DataD
     }
   }
 
-  private val metricNameFormatter: MetricNameFormatter = new MetricNameFormatter {
+  private def metricNameFormatter(removeTagsFromMetricName: Boolean): MetricNameFormatter = new MetricNameFormatter {
     override def format(nameWithPrefix: String, path: String*): String = {
       RegistryKafkaMetric.decode(nameWithPrefix.replaceFirst(s"${datadogConfig.name}\\.","")) match {
         case Some(registryKafkaMetric) =>
-          val builder = new TaggedNameBuilder().metricName(nameWithPrefix)
-            .addTag("topic", registryKafkaMetric.topic)
+          val builder = new TaggedNameBuilder().metricName(
+            if (removeTagsFromMetricName) buildNameWithoutTags(registryKafkaMetric) else nameWithPrefix
+          ).addTag("topic", registryKafkaMetric.topic)
             .addTag("group", registryKafkaMetric.group)
           registryKafkaMetric.partition.foreach(p => builder.addTag("partition", p))
           builder.build().encode()
@@ -38,15 +38,15 @@ class RemoraDatadogReporter(metricRegistry: MetricRegistry, datadogConfig: DataD
     }
   }
 
+  private def buildNameWithoutTags(registryKafkaMetric: RegistryKafkaMetric): String =
+    s"${datadogConfig.name}.${registryKafkaMetric.prefix}.${registryKafkaMetric.suffix}"
+
   def startReporter(): Unit = DatadogReporter
     .forRegistry(metricRegistry)
     .withPrefix(datadogConfig.name)
     .withTransport(transport)
     .filter(kafkaConsumerGroupFilter)
-    .withMetricNameFormatter(metricNameFormatter)
+    .withMetricNameFormatter(metricNameFormatter(datadogConfig.removeTagsFromMetricName))
     .build
     .start(datadogConfig.intervalMinutes, TimeUnit.MINUTES)
-
-
 }
-
