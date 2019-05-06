@@ -11,8 +11,8 @@ class RemoraDatadogReporterSpec extends FlatSpec with Matchers with PrivateMetho
 
   private val metricRegistry: MetricRegistry = new MetricRegistry
   private val metric: Metric = mock[Metric]
-  private val config = DataDog(enabled = true, "test", 1, "localhost", 8125, List.empty, removeTagsFromMetricName = false)
-  private val configRemoveTags = DataDog(enabled = true, "test", 1, "localhost", 8125, List.empty, removeTagsFromMetricName = true)
+  private val config = DataDog(enabled = true, "test", 1, "localhost", 8125, List.empty, removeTagsFromMetricName = false, "default_cluster")
+  private val configRemoveTags = DataDog(enabled = true, "test", 1, "localhost", 8125, List.empty, removeTagsFromMetricName = true, "default_cluster")
 
   "Metrics filter" should "match any metric when no filter is given" in {
     val filter = buildMetricFilter(List.empty)
@@ -54,7 +54,7 @@ class RemoraDatadogReporterSpec extends FlatSpec with Matchers with PrivateMetho
   "Metric name formatter without tags" should "add tag information if metric is well formatted" in {
     val formatter = getMetricNameFormatter(configRemoveTags)
 
-    formatter.format(s"${configRemoveTags.name}.gauge.test.1.test-consumer.lag") should be(s"${configRemoveTags.name}.gauge.lag[topic:test,group:test-consumer,partition:1]")
+    formatter.format(s"${configRemoveTags.name}.gauge.test.1.test-consumer.lag") should be(s"${configRemoveTags.name}.gauge.lag[topic:test,group:test-consumer,partition:1,cluster:default_cluster]")
   }
 
   it should "not add partition tag information if no partition" in {

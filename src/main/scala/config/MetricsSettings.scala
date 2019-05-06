@@ -12,7 +12,8 @@ case class DataDog(enabled: Boolean = false,
                    agentHost: String,
                    agentPort: Int,
                    trackedConsumerGroups: List[String],
-                   removeTagsFromMetricName: Boolean)
+                   removeTagsFromMetricName: Boolean,
+                   cluster_tag: String)
 
 case class MetricsSettings(cloudWatch: CloudWatch, dataDog: DataDog, registryOptions: RegistryOptions)
 
@@ -31,7 +32,8 @@ object MetricsSettings {
         config.getString("metrics.datadog.host"),
         config.getInt("metrics.datadog.port"),
         config.getStringList("metrics.datadog.tracked_consumer_group").asScala.toList,
-        config.getBoolean("metrics.datadog.remove_tags_from_metric_name")
+        config.getBoolean("metrics.datadog.remove_tags_from_metric_name"),
+        config.getString("metrics.datadog.cluster_tag")
       ),
       RegistryOptions(
         config.getBoolean("metrics.toregistry.enabled"),

@@ -31,6 +31,7 @@ class RemoraDatadogReporter(metricRegistry: MetricRegistry, datadogConfig: DataD
             if (removeTagsFromMetricName) buildNameWithoutTags(registryKafkaMetric) else nameWithPrefix
           ).addTag("topic", registryKafkaMetric.topic)
             .addTag("group", registryKafkaMetric.group)
+            .addTag("cluster", datadogConfig.cluster_tag)
           registryKafkaMetric.partition.foreach(p => builder.addTag("partition", p))
           builder.build().encode()
         case None => nameWithPrefix
