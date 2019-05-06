@@ -11,8 +11,8 @@ class RemoraDatadogReporterSpec extends FlatSpec with Matchers with PrivateMetho
 
   private val metricRegistry: MetricRegistry = new MetricRegistry
   private val metric: Metric = mock[Metric]
-  private val config = DataDog(enabled = true, "test", 1, "localhost", 8125, List.empty, removeTagsFromMetricName = false, "default_cluster")
-  private val configRemoveTags = DataDog(enabled = true, "test", 1, "localhost", 8125, List.empty, removeTagsFromMetricName = true, "default_cluster")
+  private val config = DataDog(enabled = true, "test", 1, "localhost", 8125, List.empty, removeTagsFromMetricName = false, "defaultcluster")
+  private val configRemoveTags = DataDog(enabled = true, "test", 1, "localhost", 8125, List.empty, removeTagsFromMetricName = true, "defaultcluster")
 
   "Metrics filter" should "match any metric when no filter is given" in {
     val filter = buildMetricFilter(List.empty)
@@ -54,13 +54,13 @@ class RemoraDatadogReporterSpec extends FlatSpec with Matchers with PrivateMetho
   "Metric name formatter without tags" should "add tag information if metric is well formatted" in {
     val formatter = getMetricNameFormatter(configRemoveTags)
 
-    formatter.format(s"${configRemoveTags.name}.gauge.test.1.test-consumer.lag") should be(s"${configRemoveTags.name}.gauge.lag[topic:test,group:test-consumer,partition:1,cluster:default_cluster]")
+    formatter.format(s"${configRemoveTags.name}.gauge.test.1.test-consumer.lag") should be(s"${configRemoveTags.name}.gauge.lag[topic:test,group:test-consumer,partition:1,cluster:defaultcluster]")
   }
 
   it should "not add partition tag information if no partition" in {
     val formatter = getMetricNameFormatter(configRemoveTags)
 
-    formatter.format(s"${configRemoveTags.name}.gauge.test-topic.test-consumer.totalLag") should be(s"${configRemoveTags.name}.gauge.totalLag[topic:test-topic,group:test-consumer]")
+    formatter.format(s"${configRemoveTags.name}.gauge.test-topic.test-consumer.totalLag") should be(s"${configRemoveTags.name}.gauge.totalLag[topic:test-topic,group:test-consumer,cluster:defaultcluster]")
   }
 
   private def buildMetricFilter(kafkaConsumerList: List[String], removeTags: Boolean = false): MetricFilter = {
