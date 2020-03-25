@@ -2,7 +2,7 @@ language: scala
 scala:
  - 2.11.8
 jdk:
-  - oraclejdk8
+  - openjdk8
 sudo: false
 before_cache:
   # Cleanup the cached directories to avoid unnecessary cache updates
