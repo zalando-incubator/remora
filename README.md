@@ -53,7 +53,7 @@ docker run -it --rm -p 9000:9000 -e KAFKA_ENDPOINT=127.0.0.1:9092 registry.opens
 Run it with different log level:
 
 ```bash
-docker run -it --rm -p 9000:9000 -e KAFKA_ENDPOINT=127.0.0.1:9092 -e 'JAVA_OPTS=-Dlogback-root-level=INFO' remora
+docker run -it --rm -p 9000:9000 -e KAFKA_ENDPOINT=127.0.0.1:9092 -e 'JAVA_OPTS=-Dlogback-root-level=INFO' registry.opensource.zalan.do/machina/remora
 ```
 
 For further examples see the [docker-compose.yml](basic-example/docker-compose.yml)
