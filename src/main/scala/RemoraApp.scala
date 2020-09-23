@@ -13,8 +13,6 @@ import config.{KafkaSettings, MetricsSettings}
 import kafka.admin.RemoraKafkaConsumerGroupService
 import reporter.RemoraDatadogReporter
 
-
-
 import scala.concurrent.duration._
 import scala.util.control.NonFatal
 
@@ -88,5 +86,4 @@ object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented wit
     val datadogReporter = new RemoraDatadogReporter(metricRegistry, metricsSettings.dataDog)
     datadogReporter.startReporter()
   }
-
 }
