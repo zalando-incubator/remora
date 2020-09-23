@@ -473,6 +473,8 @@ The following environment variables can be used to configure reporting to Cloudw
 
 * **CLOUDWATCH_ON** - `default false` reports metricsRegistry to cloudwatch, TO_REGISTRY will need to be switched on!
 * **CLOUDWATCH_NAME** - `default 'remora'` name to appear on cloudwatch
+* **WHITELIST** - `default ''` metric names to whitelist. The whitelist will be compared with metric names and will allow based on "equality" or "endswith". I.E "gauge.DATA_SAMPLE.lag" will be whitelisted if the environment variable is "DATA_SAMPLE.lag
+ or "gauge.DATA_SAMPLE.lag." Place a space in between metric names for multiple whitelists.
 
 ### Configuring Remora with Datadog
 
