@@ -4,7 +4,7 @@ import com.typesafe.config.Config
 import scala.collection.JavaConverters._
 
 case class RegistryOptions(enabled: Boolean = true, intervalSeconds: Int)
-case class CloudWatch(enabled: Boolean = false, name: String, intervalMinutes: Int)
+case class CloudWatch(enabled: Boolean = false, name: String, intervalMinutes: Int, whitelist: String)
 
 case class DataDog(enabled: Boolean = false,
                    name: String,
@@ -22,7 +22,8 @@ object MetricsSettings {
       CloudWatch(
         config.getBoolean("metrics.cloudwatch.enabled"),
         config.getString("metrics.cloudwatch.name"),
-        config.getInt("metrics.cloudwatch.interval_minutes")
+        config.getInt("metrics.cloudwatch.interval_minutes"),
+        config.getString("metrics.cloudwatch.whitelist")
       ),
       DataDog(
         config.getBoolean("metrics.datadog.enabled"),
