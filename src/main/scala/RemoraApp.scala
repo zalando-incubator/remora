@@ -12,6 +12,7 @@ import com.typesafe.scalalogging.LazyLogging
 import config.{KafkaSettings, MetricsSettings}
 import kafka.admin.RemoraKafkaConsumerGroupService
 import reporter.RemoraDatadogReporter
+import Utils.buildMetricFilter
 
 import scala.concurrent.duration._
 import scala.util.control.NonFatal
@@ -56,21 +57,7 @@ object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented wit
     val amazonCloudWatchAsync: AmazonCloudWatchAsync = AmazonCloudWatchAsyncClientBuilder.defaultClient
 
     // if null, cloudwatch grabs all the logs possible
-    val filterString = metricsSettings.cloudWatch.whitelist.split(" ")
-
-    val logMetricFilter = new MetricFilter() {
-      //since matches has is a string, the whitelist should be log filenames with commas with spaces
-      override def matches(string: String, metric: Metric): Boolean =  {
-        logger.debug("Metric Name:" + string)
-        if (filterString.length == 0) return true
-        for (v <- filterString) {
-            if (string.endsWith(v) || string == v ) {
-                return true
-            }
-        }
-        return false
-      }
-    }
+    val logMetricFilter = buildMetricFilter(metricsSettings.cloudWatch.metricFilter)
 
     new CloudWatchReporterBuilder()
       .withNamespace(metricsSettings.cloudWatch.name)

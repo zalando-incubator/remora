@@ -4,6 +4,9 @@ import com.blacklocus.metrics.CloudWatchReporterBuilder
 import com.codahale.metrics.{Metric, MetricFilter, MetricRegistry}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers, PrivateMethodTester}
+import Utils.buildMetricFilter
+import scala.util.matching.Regex
+
 
 class CloudWatchReporterSpec extends FlatSpec with Matchers with PrivateMethodTester with MockFactory {
 
@@ -12,43 +15,21 @@ class CloudWatchReporterSpec extends FlatSpec with Matchers with PrivateMethodTe
 
 
   "Metrics filter" should "match any metric when empty string filter is given" in {
-    val filter = buildMetricFilter(List.empty)
+    val filter = buildMetricFilter("")
 
     filter.matches("any_metrics_name", metric) should be(true)
+    filter.matches("xfaewojz", metric) should be(true)
   }
 
-  "Metrics filter" should "match only metrics that are part of the filter string (false: does not contain)" in {
-    val filter = buildMetricFilter(List("storage fo", "stofs"))
+  "Metrics filter" should "match metrics that have the regex pattern: true" in {
+    val filter = buildMetricFilter("([a-zA-Z]+.[a-zA-Z].*LFS+-loader-.+.lag)")
 
-    filter.matches("stor", metric) should be(false)
+    filter.matches("gauge.readings_V1-LFS-loader-aws.lag", metric) should be(true)
   }
 
-   "Metrics filter" should "match only metrics that are part of the filter string (true: contains)" in {
-    val filter = buildMetricFilter(List("stor"))
+   "Metrics filter" should "match metrics that have the regex pattern: false" in {
+    val filter = buildMetricFilter("([a-zA-Z]+.[a-zA-Z].*LFS+-loader-.+.lag)")
 
-    filter.matches("storage", metric) should be(true)
-  }
-
-
-  "Metrics filter" should "match only metrics that are part of the filter string (false: incorrect)" in {
-    val filter = buildMetricFilter(List("storage fo"))
-
-    filter.matches("storagx", metric) should be(false)
-  }
-
-  private def buildMetricFilter(filterString: List[String]): MetricFilter = {
-    new MetricFilter() {
-    //since matches has is a string, the whitelist should be log filenames with commas with spaces
-        override def matches(string: String, metric: Metric): Boolean =  {
-            if (filterString == List.empty) return true
-            for (v <- filterString) {
-                if (string.contains(v)) {
-                    return true
-                }
-            }
-            return false
-
-        }
-    }
+    filter.matches("gauge.vers.stop.lag", metric) should be(false)
   }
 }
