@@ -10,16 +10,8 @@
     <logger name="org.apache.kafka" level="ERROR" />
     <logger name="org.apache.zookeeper" level="ERROR" />
 
-    <root level="debug">
-        <appender-ref ref="stdout"/>
-    </root>
-
     <root level="${logback-root-level:-debug}">
-        <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder>
-                <pattern>%date{ISO8601} - [%level] - [%thread] %logger{36} - %message%n%ex</pattern>
-            </encoder>
-        </appender>
+        <appender-ref ref="stdout" />
     </root>
 
 </configuration>

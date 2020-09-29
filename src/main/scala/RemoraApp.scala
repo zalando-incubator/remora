@@ -7,15 +7,15 @@ import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}
 import com.amazonaws.services.cloudwatch.{AmazonCloudWatchAsync, AmazonCloudWatchAsyncClientBuilder}
 import com.blacklocus.metrics.CloudWatchReporterBuilder
 import com.codahale.metrics.jvm.{GarbageCollectorMetricSet, MemoryUsageGaugeSet, ThreadStatesGaugeSet}
-import com.codahale.metrics.{MetricFilter, Metric}
 import com.typesafe.scalalogging.LazyLogging
 import config.{KafkaSettings, MetricsSettings}
 import kafka.admin.RemoraKafkaConsumerGroupService
 import reporter.RemoraDatadogReporter
-import Utils.buildMetricFilter
+import CloudWatchMetricFilter.buildMetricFilter
 
 import scala.concurrent.duration._
 import scala.util.control.NonFatal
+import scala.util.matching.Regex
 
 object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented with LazyLogging {
 
@@ -56,8 +56,7 @@ object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented wit
     logger.info("Reporting metricsRegistry to Cloudwatch")
     val amazonCloudWatchAsync: AmazonCloudWatchAsync = AmazonCloudWatchAsyncClientBuilder.defaultClient
 
-    // if null, cloudwatch grabs all the logs possible
-    val logMetricFilter = buildMetricFilter(metricsSettings.cloudWatch.metricFilter)
+    val logMetricFilter = buildMetricFilter(new Regex(metricsSettings.cloudWatch.metricFilter))
 
     new CloudWatchReporterBuilder()
       .withNamespace(metricsSettings.cloudWatch.name)
