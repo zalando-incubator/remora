@@ -15,25 +15,25 @@ class CloudWatchMetricFilterSpec extends FlatSpec with Matchers with PrivateMeth
 
 
   "buildMetricsFilter" should "match any metric when empty string filter is given" in {
-    val filter = buildMetricFilter(new Regex(""))
+    val filter = buildMetricFilter("".r)
 
     filter.matches("any_metrics_name", metric) should be(true)
     filter.matches("xfaewojz", metric) should be(true)
   }
 
    "it" should "match metrics that have the regex pattern: true" in {
-    val filter = buildMetricFilter(new Regex("([a-zA-Z]+.[a-zA-Z].*LFS+-loader-.+.lag)"))
+    val filter = buildMetricFilter("([a-zA-Z]+.[a-zA-Z].*LFS+-loader-.+.lag)".r)
 
     filter.matches("gauge.readings_V1-LFS-loader-aws.lag", metric) should be(true)
   }
 
    "it" should "match metrics that have the regex pattern: false" in {
-    val filter = buildMetricFilter(new Regex("([a-zA-Z]+.[a-zA-Z].*LFS+-loader-.+.lag)"))
+    val filter = buildMetricFilter("([a-zA-Z]+.[a-zA-Z].*LFS+-loader-.+.lag)".r)
 
     filter.matches("gauge.vers.stop.lag", metric) should be(false)
   }
 
    "it" should "error when theres an invalid regex pattern created" in {
-    an [PatternSyntaxException] should be thrownBy new Regex("[")
+    an [PatternSyntaxException] should be thrownBy "[".r
    }
 }

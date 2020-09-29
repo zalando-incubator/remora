@@ -56,7 +56,7 @@ object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented wit
     logger.info("Reporting metricsRegistry to Cloudwatch")
     val amazonCloudWatchAsync: AmazonCloudWatchAsync = AmazonCloudWatchAsyncClientBuilder.defaultClient
 
-    val logMetricFilter = buildMetricFilter(new Regex(metricsSettings.cloudWatch.metricFilter))
+    val logMetricFilter = buildMetricFilter(metricsSettings.cloudWatch.metricFilter)
 
     new CloudWatchReporterBuilder()
       .withNamespace(metricsSettings.cloudWatch.name)
