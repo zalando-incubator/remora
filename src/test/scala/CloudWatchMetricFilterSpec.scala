@@ -32,8 +32,4 @@ class CloudWatchMetricFilterSpec extends FlatSpec with Matchers with PrivateMeth
 
     filter.matches("gauge.vers.stop.lag", metric) should be(false)
   }
-
-   "it" should "error when theres an invalid regex pattern created" in {
-    an [PatternSyntaxException] should be thrownBy "[".r
-   }
 }
