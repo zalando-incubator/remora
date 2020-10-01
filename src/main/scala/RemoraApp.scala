@@ -11,9 +11,11 @@ import com.typesafe.scalalogging.LazyLogging
 import config.{KafkaSettings, MetricsSettings}
 import kafka.admin.RemoraKafkaConsumerGroupService
 import reporter.RemoraDatadogReporter
+import filter.CloudWatchMetricFilter
 
 import scala.concurrent.duration._
 import scala.util.control.NonFatal
+import scala.util.matching.Regex
 
 object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented with LazyLogging {
 
@@ -54,10 +56,13 @@ object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented wit
     logger.info("Reporting metricsRegistry to Cloudwatch")
     val amazonCloudWatchAsync: AmazonCloudWatchAsync = AmazonCloudWatchAsyncClientBuilder.defaultClient
 
+    val logMetricFilter = new CloudWatchMetricFilter(metricsSettings.cloudWatch.metricFilter)
+
     new CloudWatchReporterBuilder()
       .withNamespace(metricsSettings.cloudWatch.name)
       .withRegistry(metricRegistry)
       .withClient(amazonCloudWatchAsync)
+      .withFilter(logMetricFilter)
       .build()
       .start(metricsSettings.cloudWatch.intervalMinutes, TimeUnit.MINUTES)
   }
@@ -67,5 +72,4 @@ object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented wit
     val datadogReporter = new RemoraDatadogReporter(metricRegistry, metricsSettings.dataDog)
     datadogReporter.startReporter()
   }
-
 }

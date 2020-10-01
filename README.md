@@ -473,6 +473,7 @@ The following environment variables can be used to configure reporting to Cloudw
 
 * **CLOUDWATCH_ON** - `default false` reports metricsRegistry to cloudwatch, TO_REGISTRY will need to be switched on!
 * **CLOUDWATCH_NAME** - `default 'remora'` name to appear on cloudwatch
+* **CLOUDWATCH_METRIC_FILTER** - `default ''` metric names to filter on cloudwatch. Set the CLOUDWATCH_METRIC_FILTER variable to a regex string to filter out metric names that DO NOT match the regex.
 
 ### Configuring Remora with Datadog
 
