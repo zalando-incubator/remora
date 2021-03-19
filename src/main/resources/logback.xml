@@ -10,7 +10,7 @@
     <logger name="org.apache.kafka" level="ERROR" />
     <logger name="org.apache.zookeeper" level="ERROR" />
 
-    <root level="debug">
+    <root level="${logback-root-level:-debug}">
         <appender-ref ref="stdout" />
     </root>
 

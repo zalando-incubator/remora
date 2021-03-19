@@ -50,6 +50,12 @@ They can be used as follows:
 docker run -it --rm -p 9000:9000 -e KAFKA_ENDPOINT=127.0.0.1:9092 registry.opensource.zalan.do/machina/remora
 ```
 
+Run it with different log level:
+
+```bash
+docker run -it --rm -p 9000:9000 -e KAFKA_ENDPOINT=127.0.0.1:9092 -e 'JAVA_OPTS=-Dlogback-root-level=INFO' registry.opensource.zalan.do/machina/remora
+```
+
 For further examples see the [docker-compose.yml](basic-example/docker-compose.yml)
 
 ```bash
@@ -467,6 +473,7 @@ The following environment variables can be used to configure reporting to Cloudw
 
 * **CLOUDWATCH_ON** - `default false` reports metricsRegistry to cloudwatch, TO_REGISTRY will need to be switched on!
 * **CLOUDWATCH_NAME** - `default 'remora'` name to appear on cloudwatch
+* **CLOUDWATCH_METRIC_FILTER** - `default ''` metric names to filter on cloudwatch. Set the CLOUDWATCH_METRIC_FILTER variable to a regex string to filter out metric names that DO NOT match the regex.
 
 ### Configuring Remora with Datadog
 
