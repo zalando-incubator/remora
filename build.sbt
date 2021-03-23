@@ -7,11 +7,11 @@ lazy val commonSettings = Seq(
 lazy val dockerSettings = Seq(
   daemonUser := "root",
   dockerUpdateLatest := true,
-  dockerBaseImage := "registry.opensource.zalan.do/library/openjdk-8:8-20201005",
+  dockerBaseImage := "registry.opensource.zalan.do/library/openjdk-8:latest",
   dockerExposedPorts := Seq(9000),
   dockerExposedVolumes := Seq("/opt/docker/logs"),
   dockerRepository := sys.props.get("docker.repo"),
-  maintainer := "team-setanta@zalando.ie"
+  maintainer := "team-buffalo@zalando.ie"
 )
 
 lazy val gitSettings = Seq(
