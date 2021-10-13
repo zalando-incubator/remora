@@ -13,9 +13,9 @@ private[metrics] object MetricsDirectivesSupport {
 
   def meterByStatus(nameFunc: RequestContext => String)(implicit registry: MetricRegistry): Directive0 = mapInnerRoute { inner =>ctx =>
     inner(ctx).andThen {
-      case Success(RouteResult.Complete(resp))  => findAndRegisterMeter(s"${nameFunc(ctx)}.${liftStatusCode(resp.status)}").mark()
-      case Success(RouteResult.Rejected(_))     => findAndRegisterMeter(s"${nameFunc(ctx)}.rejections").mark()
-      case _: Failure[_]                        => findAndRegisterMeter(s"${nameFunc(ctx)}.failures").mark()
+      case Success(RouteResult.Complete(resp))  => findAndRegisterMeter(s"${nameFunc(ctx)}-${liftStatusCode(resp.status)}").mark()
+      case Success(RouteResult.Rejected(_))     => findAndRegisterMeter(s"${nameFunc(ctx)}-rejections").mark()
+      case _: Failure[_]                        => findAndRegisterMeter(s"${nameFunc(ctx)}-failures").mark()
     }(ctx.executionContext)
   }
 
