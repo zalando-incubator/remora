@@ -1,6 +1,5 @@
 
 import java.util.concurrent.TimeUnit
-
 import JsonOps._
 import KafkaClientActor.{Command, DescribeKafkaCluster, DescribeKafkaConsumerGroup, ListConsumers}
 import akka.actor.{ActorRef, ActorSystem}
@@ -13,13 +12,13 @@ import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import akka.pattern.ask
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import backline.http.metrics.{StatusCodeCounterDirectives, TimerDirectives}
 import com.codahale.metrics.MetricRegistry
 import com.codahale.metrics.json.MetricsModule
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
+import metrics.MetricsDirectives
 import models.{GroupInfo, KafkaClusterHealthResponse}
 import org.apache.kafka.clients.admin.DescribeClusterResult
 import play.api.libs.json._
@@ -31,9 +30,8 @@ import scala.reflect.ClassTag
 
 class Api(kafkaClientActorRef: ActorRef)
          (implicit actorSystem: ActorSystem, Materializer: ActorMaterializer)
-  extends StatusCodeCounterDirectives
+  extends MetricsDirectives
     with LazyLogging
-    with TimerDirectives
     with nl.grons.metrics.scala.DefaultInstrumented
     with PlayJsonSupport {
 
@@ -64,7 +62,7 @@ class Api(kafkaClientActorRef: ActorRef)
 
   val route: Route =
     withTimer {
-      withStatusCodeCounter {
+      withMeterByStatusCode {
         redirectToNoTrailingSlashIfPresent(StatusCodes.Found) {
           handleExceptions(remoraExceptionHandler) {
             path("metrics") {
