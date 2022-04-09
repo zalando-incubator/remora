@@ -1,6 +1,5 @@
 package filter
 
-import com.typesafe.scalalogging.LazyLogging
 import com.codahale.metrics.{Metric, MetricFilter}
 import scala.util.matching.Regex
 

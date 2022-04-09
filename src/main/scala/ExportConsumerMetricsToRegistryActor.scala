@@ -1,29 +1,28 @@
 import KafkaClientActor.{Command, DescribeKafkaConsumerGroup, ListConsumers}
 import akka.actor._
 import akka.pattern.ask
-import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import com.codahale.metrics.Gauge
 import models.RegistryKafkaMetric._
 import models.{GroupInfo, RegistryKafkaMetric}
-import nl.grons.metrics.scala.{ActorInstrumentedLifeCycle, ReceiveCounterActor, ReceiveExceptionMeterActor, ReceiveTimerActor}
+import nl.grons.metrics4.scala.{ActorInstrumentedLifeCycle, ReceiveCounterActor, ReceiveExceptionMeterActor, ReceiveTimerActor}
 
 import scala.concurrent.duration._
 import scala.reflect.ClassTag
 
 object ExportConsumerMetricsToRegistryActor {
-  def props(kafkaClientActorRef: ActorRef)(implicit actorSystem: ActorSystem, materializer: ActorMaterializer) =
-    Props(classOf[ExportConsumerMetricsToRegistryActor], kafkaClientActorRef, actorSystem, materializer)
+  def props(kafkaClientActorRef: ActorRef)(implicit actorSystem: ActorSystem) =
+    Props(classOf[ExportConsumerMetricsToRegistryActor], kafkaClientActorRef, actorSystem)
 }
 
 class BaseExportConsumerMetricsToRegistryActor(kafkaClientActorRef: ActorRef)
-                                              (implicit actorSystem: ActorSystem, materializer: ActorMaterializer)
+                                              (implicit actorSystem: ActorSystem)
   extends Actor
     with ActorLogging
-    with nl.grons.metrics.scala.DefaultInstrumented
+    with nl.grons.metrics4.scala.DefaultInstrumented
     with ActorInstrumentedLifeCycle {
 
-  implicit val timeout = Timeout(60 seconds)
+  implicit val timeout = Timeout(60.seconds)
   implicit val apiExecutionContext = actorSystem.dispatchers.lookup("exporter-dispatcher")
 
   private def askFor[RES](command: Command)(implicit tag: ClassTag[RES]) =
@@ -74,7 +73,7 @@ class BaseExportConsumerMetricsToRegistryActor(kafkaClientActorRef: ActorRef)
 }
 
 class ExportConsumerMetricsToRegistryActor(kafkaClientActorRef: ActorRef)
-                                          (implicit actorSystem: ActorSystem, materializer: ActorMaterializer)
+                                          (implicit actorSystem: ActorSystem)
   extends BaseExportConsumerMetricsToRegistryActor(kafkaClientActorRef)
     with ReceiveCounterActor
     with ReceiveTimerActor

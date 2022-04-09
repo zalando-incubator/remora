@@ -10,7 +10,6 @@ import akka.http.scaladsl.model.{HttpResponse, MediaTypes, StatusCodes}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import akka.pattern.ask
-import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import com.codahale.metrics.MetricRegistry
 import com.codahale.metrics.json.MetricsModule
@@ -23,16 +22,16 @@ import models.{GroupInfo, KafkaClusterHealthResponse}
 import org.apache.kafka.clients.admin.DescribeClusterResult
 import play.api.libs.json._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.concurrent.{Future, TimeoutException}
 import scala.concurrent.duration._
 import scala.reflect.ClassTag
 
 class Api(kafkaClientActorRef: ActorRef)
-         (implicit actorSystem: ActorSystem, Materializer: ActorMaterializer)
+         (implicit actorSystem: ActorSystem)
   extends MetricsDirectives
     with LazyLogging
-    with nl.grons.metrics.scala.DefaultInstrumented
+    with nl.grons.metrics4.scala.DefaultInstrumented
     with PlayJsonSupport {
 
   implicit val apiExecutionContext: MessageDispatcher = actorSystem.dispatchers.lookup("api-dispatcher")
@@ -112,12 +111,12 @@ class Api(kafkaClientActorRef: ActorRef)
     completeOrRecoverWith(clusterHealthFuture) { failWith }
   }
 
-  def start(): Future[Http.ServerBinding] = Http().bindAndHandle(route, "0.0.0.0", settings.port)
+  def start(): Future[Http.ServerBinding] = Http().newServerAt("0.0.0.0", settings.port).bind(route)
 }
 
 object Api {
   def apply(kafkaClientActorRef: ActorRef)
-           (implicit actorSystem: ActorSystem, actorMaterializer: ActorMaterializer) =
+           (implicit actorSystem: ActorSystem) =
     new Api(kafkaClientActorRef)
 }
 

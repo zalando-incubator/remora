@@ -4,7 +4,7 @@ package metrics
 import akka.http.scaladsl.server.RequestContext
 import com.codahale.metrics._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object MetricUtils {
   def getMetricName(ctx: RequestContext): String = {

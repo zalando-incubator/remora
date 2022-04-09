@@ -1,5 +1,4 @@
 import java.util.Properties
-
 import config.KafkaSettings
 
 import scala.concurrent.duration._
@@ -8,7 +7,8 @@ import org.apache.kafka.clients.consumer.{ConsumerConfig, ConsumerRecords, Offse
 import org.apache.kafka.common.serialization.Deserializer
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.flatspec.AnyFlatSpec
 import org.slf4j.LoggerFactory
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.ContentTypes
@@ -18,12 +18,13 @@ import akka.testkit.{TestActorRef, TestKit}
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
 import kafka.admin.RemoraKafkaConsumerGroupService
 import models.{KafkaClusterHealthResponse, Node}
-import net.manub.embeddedkafka.Codecs.stringDeserializer
-import net.manub.embeddedkafka.{EmbeddedKafka, EmbeddedKafkaConfig}
+import io.github.embeddedkafka.Codecs.stringDeserializer
+import io.github.embeddedkafka.{EmbeddedKafka, EmbeddedKafkaConfig}
 import org.apache.kafka.clients.CommonClientConfigs
+import org.scalatest.matchers.should.Matchers
 import play.api.libs.json._
 
-class ApiSpec extends FlatSpec with Matchers with BeforeAndAfterAll with ScalatestRouteTest with PlayJsonSupport with Eventually {
+class ApiSpec extends AnyFlatSpec with Matchers with BeforeAndAfterAll with ScalatestRouteTest with PlayJsonSupport with Eventually {
   private val logger = LoggerFactory.getLogger(ApiSpec.this.getClass.getName)
 
   implicit def default(implicit system: ActorSystem) = RouteTestTimeout(5.seconds)
@@ -56,12 +57,12 @@ class ApiSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Scalate
     implicitly[Deserializer[String]],
     (record : ConsumerRecords[String, String]) => logger.info(record.toString))
 
-  override def beforeAll: Unit = {
+  override def beforeAll(): Unit = {
     EmbeddedKafka.start()
     consumer.start()
   }
 
-  override def afterAll {
+  override def afterAll(): Unit = {
     consumer.stop()
     EmbeddedKafka.stop()
     TestKit.shutdownActorSystem(system)
@@ -70,8 +71,8 @@ class ApiSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Scalate
   "GET /consumers" should "return a 200 and list of consumer groups" in {
     eventually {
       Get("/consumers") ~> ApiTest.route ~> check {
-        status should be(OK)
-        entityAs[JsArray].value.contains(JsString(consumerGroup)) should be(true)
+        status shouldBe OK
+        entityAs[JsArray].value.contains(JsString(consumerGroup)) shouldBe true
       }
     }
   }
@@ -79,22 +80,22 @@ class ApiSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Scalate
   "GET /consumers/consumerGroup" should "return a 200 and consumer group information" in {
     eventually {
       Get(s"/consumers/${consumerGroup}") ~> ApiTest.route ~> check {
-        status should be(OK)
+        status shouldBe OK
         val response = entityAs[JsValue]
         val partitionAssignmentState = (response \ "partition_assignment").as[JsArray].value
         val lagPerTopic = (response \ "lag_per_topic").as[JsValue]
-        (lagPerTopic \ "test-topic").get.asInstanceOf[JsNumber].value should be(0)
-        partitionAssignmentState.size should be > 0
+        (lagPerTopic \ "test-topic").get.asInstanceOf[JsNumber].value shouldBe 0
+        partitionAssignmentState.nonEmpty shouldBe true
       }
     }
   }
 
   "GET" should "return a 200 with cluster JSON info to /health" in {
     Get("/health") ~> ApiTest.route ~> check {
-      status should be(OK)
-      contentType should be(ContentTypes.`application/json`)
+      status shouldBe OK
+      contentType shouldBe ContentTypes.`application/json`
 
-      import scala.collection.JavaConverters._
+      import scala.jdk.CollectionConverters._
       import JsonOps.clusterHealthReads
 
       val clusterDesc = kafkaSettings.adminClient.describeCluster
@@ -108,10 +109,10 @@ class ApiSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Scalate
       val entity = Json.fromJson[KafkaClusterHealthResponse](entityAs[JsValue])
 
       assert(entity.isSuccess)
-      entity.get.clusterId should be(resp.clusterId)
-      entity.get.controller should be(resp.controller)
-      entity.get.nodes.length should be(1)
-      entity.get.nodes should be(resp.nodes)
+      entity.get.clusterId shouldBe resp.clusterId
+      entity.get.controller shouldBe resp.controller
+      entity.get.nodes.length shouldBe 1
+      entity.get.nodes shouldBe resp.nodes
     }
   }
 }

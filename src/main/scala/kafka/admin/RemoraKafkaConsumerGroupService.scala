@@ -1,7 +1,5 @@
 package kafka.admin
 
-import java.util.logging.Logger
-
 import config.KafkaSettings
 import kafka.admin.ConsumerGroupCommand.ConsumerGroupCommandOptions
 import models.{GroupInfo, Node, PartitionAssignmentState}
@@ -19,9 +17,7 @@ trait ConsumerGroupService {
 
 class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
                                      (implicit executionContext: ExecutionContextExecutor) extends ConsumerGroupService
-  with nl.grons.metrics.scala.DefaultInstrumented {
-
-  private val logger = Logger.getLogger(RemoraKafkaConsumerGroupService.this.getClass.getName)
+  with nl.grons.metrics4.scala.DefaultInstrumented {
 
   private val listTimer = metrics.timer("list-timer")
   private val describeTimer = metrics.timer("describe-timer")
@@ -35,9 +31,9 @@ class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
   }
 
   private def baseConfig(): Array[String] = {
-    var baseConfig: ArrayBuffer[String] = ArrayBuffer("--bootstrap-server", kafkaSettings.address)
+    val baseConfig: ArrayBuffer[String] = ArrayBuffer("--bootstrap-server", kafkaSettings.address)
 
-    if (!kafkaSettings.commandConfig.isEmpty) {
+    if (kafkaSettings.commandConfig.nonEmpty) {
       baseConfig ++= Array("--command-config", kafkaSettings.commandConfig)
     }
 
@@ -58,7 +54,7 @@ class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
     listTimer.time {
       val groupService = createKafkaConsumerGroupService()
       try {
-        groupService.listGroups()
+        groupService.listConsumerGroups()
       } finally {
         groupService.close()
       }
@@ -69,7 +65,7 @@ class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
     describeGroupTimer.time {
       val kafkaConsumerGroupService = createKafkaConsumerGroupService(Some(group))
       try {
-        val (state, assignments) = kafkaConsumerGroupService.collectGroupOffsets()
+        val (state, assignments) = kafkaConsumerGroupService.collectGroupOffsets(group)
         assignments match {
           case Some(partitionAssignmentStates) =>
             val assignments = Some(partitionAssignmentStates.map(a => PartitionAssignmentState(a.group,
@@ -83,12 +79,12 @@ class RemoraKafkaConsumerGroupService(kafkaSettings: KafkaSettings)
             val lagPerTopic = Some(partitionAssignmentStates.filter(state => state.topic.isDefined)
               .groupBy(state => state.topic.get)
               .map { case (topic, partitions) => (topic, partitions.map(_.lag).map {
-                case Some(lag) => lag.toLong
+                case Some(lag) => lag
                 case None => 0L
               }.sum)
               })
 
-            GroupInfo(state, assignments, lagPerTopic)
+            GroupInfo(state, assignments.map(_.toSeq), lagPerTopic)
           case None => GroupInfo(state)
         }
       } finally {

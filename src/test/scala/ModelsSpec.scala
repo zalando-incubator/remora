@@ -1,8 +1,8 @@
 import models.RegistryKafkaMetric
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class ModelsSpec extends FlatSpec with Matchers with MockFactory {
+class ModelsSpec extends AnyFlatSpec with Matchers {
 
   "RegistryKafkaMetric" should "be encoded as a string as expected with partition" in {
     val metric = RegistryKafkaMetric("gauge","topic", Some("partition"), "group","lag")
@@ -24,12 +24,8 @@ class ModelsSpec extends FlatSpec with Matchers with MockFactory {
     RegistryKafkaMetric.decode(stringMetric) should be(Some(RegistryKafkaMetric("gauge","topic", Some("partition"),"group","lag")))
   }
 
-
-
   it should "return None if metric name is not standard" in {
     val stringMetric = "gauge.faulty"
     RegistryKafkaMetric.decode(stringMetric) should be(None)
   }
-
-
 }
