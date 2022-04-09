@@ -28,14 +28,7 @@ lazy val dockerSettings = Seq(
 lazy val root = (project in file("."))
   .settings(commonSettings)
   .settings(dockerSettings)
-<<<<<<< HEAD
   .enablePlugins(JavaServerAppPackaging)
-=======
-  .settings(gitSettings)
-  .enablePlugins(
-    JavaServerAppPackaging
-  )
->>>>>>> a5599a5 (Update Docker publishing strategy)
 
 libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.2.11",
