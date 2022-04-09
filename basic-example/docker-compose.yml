@@ -7,7 +7,7 @@ services:
       - "2181:2181"
 
   kafka:
-    image: wurstmeister/kafka:2.11-2.0.0
+    image: wurstmeister/kafka:2.13-2.8.1
     hostname: kafka
     ports:
       - target: 9092

@@ -4,7 +4,7 @@ services:
     image: wurstmeister/zookeeper
 
   kafka:
-    image: wurstmeister/kafka:1.0.0
+    image: wurstmeister/kafka:2.13-2.8.1
     hostname: kafka
     environment:
       KAFKA_ADVERTISED_HOST_NAME: kafka
@@ -25,7 +25,7 @@ services:
         - "9000:80"
 
   remora:
-    image: registry.opensource.zalan.do/machina/remora
+    image: registry.opensource.zalan.do/buffalo/remora
     depends_on:
       - kafka
     hostname: remora
