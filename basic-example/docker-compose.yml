@@ -10,13 +10,12 @@ services:
     image: wurstmeister/kafka:2.13-2.8.1
     hostname: kafka
     ports:
-      - target: 9092
-        published: 9092
-        protocol: tcp
-        mode: host
+      - "9092:9092"
     environment:
-      KAFKA_LISTENERS: PLAINTEXT://:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9094,EXTERNAL://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9094,EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_CREATE_TOPICS: "test-0:1:1,test-1:1:1"
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
 
@@ -28,15 +27,6 @@ services:
     depends_on:
       - kafka
     environment:
-      KAFKA_ENDPOINT: "kafka:9092"
-#      JAVA_OPTS:
-#        -Xmx1g
-#        -Dcom.sun.management.jmxremote.rmi.port=9090
-#        -Dcom.sun.management.jmxremote=true
-#        -Dcom.sun.management.jmxremote.port=9090
-#        -Dcom.sun.management.jmxremote.ssl=false
-#        -Dcom.sun.management.jmxremote.authenticate=false
-#        -Dcom.sun.management.jmxremote.local.only=false
-#        -Djava.rmi.server.hostname=localhost
+      KAFKA_ENDPOINT: "kafka:9094"
     ports:
       - 9000:9000
