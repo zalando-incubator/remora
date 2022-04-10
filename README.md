@@ -1,4 +1,4 @@
-# Remora [![Build Status](https://travis-ci.org/zalando-incubator/remora.svg?branch=master)](https://travis-ci.org/zalando-incubator/remora)
+# Remora
 
 ![Grafana Graph](https://raw.githubusercontent.com/imduffy15/remora-fetcher/master/img/grafana.png)
 
