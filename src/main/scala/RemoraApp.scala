@@ -1,7 +1,6 @@
 import java.io.IOException
 import java.net.ConnectException
 import java.util.concurrent.{TimeUnit, TimeoutException}
-
 import akka.actor.ActorSystem
 import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}
 import com.amazonaws.services.cloudwatch.{AmazonCloudWatchAsync, AmazonCloudWatchAsyncClientBuilder}
@@ -10,7 +9,7 @@ import com.codahale.metrics.jvm.{GarbageCollectorMetricSet, MemoryUsageGaugeSet,
 import com.typesafe.scalalogging.LazyLogging
 import config.{KafkaSettings, MetricsSettings}
 import kafka.admin.RemoraKafkaConsumerGroupService
-import reporter.RemoraDatadogReporter
+import reporter.{RemoraCloudWatchReporter, RemoraDatadogReporter}
 import filter.CloudWatchMetricFilter
 
 import scala.concurrent.duration._
@@ -54,17 +53,8 @@ object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented wit
 
   if (metricsSettings.cloudWatch.enabled) {
     logger.info("Reporting metricsRegistry to Cloudwatch")
-    val amazonCloudWatchAsync: AmazonCloudWatchAsync = AmazonCloudWatchAsyncClientBuilder.defaultClient
-
-    val logMetricFilter = new CloudWatchMetricFilter(metricsSettings.cloudWatch.metricFilter)
-
-    new CloudWatchReporterBuilder()
-      .withNamespace(metricsSettings.cloudWatch.name)
-      .withRegistry(metricRegistry)
-      .withClient(amazonCloudWatchAsync)
-      .withFilter(logMetricFilter)
-      .build()
-      .start(metricsSettings.cloudWatch.intervalMinutes, TimeUnit.MINUTES)
+    val cloudWatchReporter = new RemoraCloudWatchReporter(metricRegistry, metricsSettings.cloudWatch)
+    cloudWatchReporter.startReporter()
   }
 
   if (metricsSettings.dataDog.enabled) {
