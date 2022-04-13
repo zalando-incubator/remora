@@ -1,9 +1,142 @@
 version: "2017-09-20"
+
+dependencies:
+  - id: base-image
+    type: docker
+    ref: registry.opensource.zalan.do/library/openjdk-8
+
 pipeline:
-  - id: build
+  - id: compile-test
     type: script
-    overlay: ci/scala
+    when:
+      event: push
+      branch: master
+    vm_config:
+      type: linux
+      image: cdp-runtime/jdk8-sbt
+      size: large
+    commands:
+      - desc: Compile and test application
+        cmd: |
+          sbt compile test
+
+  - id: release-patch-version
+    type: script
+    when:
+      event: push
+      branch: master
+      triggered_by_dependency: null
+    requires_human_approval: true
+    vm_config:
+      type: linux
+      image: cdp-runtime/jdk8-sbt
+      size: large
     commands:
       - desc: Build and push docker image
         cmd: |
-          sbt compile test docker:publish -Ddocker.repo=registry-write.opensource.zalan.do/machina
+          echo "Determining next version to publish:"
+          current_release=$(git describe --tags origin/master)
+          if [[ $(cut -d '-' -f1 <<< $current_release)  =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            version="$(cut -d '-' -f1 <<< $current_release)"
+            echo "Previous release: $version"
+            buildVersion="$(cut -d '.' -f3 <<< $version)"
+            minorVersion="$(cut -d '.' -f2 <<< $version)"
+            majorVersion="$(cut -d '.' -f1 <<< $version)"
+            version="$majorVersion.$minorVersion.$(($buildVersion + 1))"
+          else
+            echo "Issue with current tag: $current_release"
+            return -1
+          fi
+          sbt "set version in ThisBuild := \"$(cut -c2- <<< $version)\"" docker:publish -Ddocker.repo=registry-write.opensource.zalan.do/machina
+          echo "Published a new release version: $version"
+          echo "Tagging new version: $version"
+          git gh-tag $version
+
+  - id: release-minor-version
+    type: script
+    when:
+      event: push
+      branch: master
+      triggered_by_dependency: null
+    requires_human_approval: true
+    vm_config:
+      type: linux
+      image: cdp-runtime/jdk8-sbt
+      size: large
+    commands:
+      - desc: Build and push docker image
+        cmd: |
+          echo "Determining next version to publish:"
+          current_release=$(git describe --tags origin/master)
+          if [[ $(cut -d '-' -f1 <<< $current_release)  =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            version="$(cut -d '-' -f1 <<< $current_release)"
+            echo "Previous release: $version"
+            minorVersion="$(cut -d '.' -f2 <<< $version)"
+            majorVersion="$(cut -d '.' -f1 <<< $version)"
+            version="$majorVersion.$(($minorVersion + 1)).0"
+          else
+            echo "Issue with current tag: $current_release"
+            return -1
+          fi
+          sbt "set version in ThisBuild := \"$(cut -c2- <<< $version)\"" docker:publish -Ddocker.repo=registry-write.opensource.zalan.do/machina
+          echo "Published a new release version: $version"
+          echo "Tagging new version: $version"
+          git gh-tag $version
+
+  - id: release-major-version
+    type: script
+    when:
+      event: push
+      branch: master
+      triggered_by_dependency: null
+    requires_human_approval: true
+    vm_config:
+      type: linux
+      image: cdp-runtime/jdk8-sbt
+      size: large
+    commands:
+      - desc: Build and push docker image
+        cmd: |
+          echo "Determining next version to publish:"
+          current_release=$(git describe --tags origin/master)
+          if [[ $(cut -d '-' -f1 <<< $current_release)  =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            version="$(cut -d '-' -f1 <<< $current_release)"
+            echo "Previous release: $version"
+            buildVersion="$(cut -d '.' -f3 <<< $version)"
+            minorVersion="$(cut -d '.' -f2 <<< $version)"
+            majorVersion="$(cut -d '.' -f1 <<< ${version//v})"
+            version="v$((majorVersion + 1)).0.0"
+          else
+            echo "Issue with current tag: $current_release"
+            return -1
+          fi
+          sbt "set version in ThisBuild := \"$(cut -c2- <<< $version)\"" docker:publish -Ddocker.repo=registry-write.opensource.zalan.do/machina
+          echo "Published a new release version: $version"
+          echo "Tagging new version: $version"
+          git gh-tag $version
+
+  - id: release-updated-base-image
+    type: script
+    when:
+      event: push
+      branch: master
+      triggered_by_dependency: base-image
+    vm_config:
+      type: linux
+      image: cdp-runtime/jdk8-sbt
+      size: large
+    commands:
+      - desc: Build and push docker image
+        cmd: |
+          echo "Determining next version to publish:"
+          current_release=$(git describe --tags origin/master)
+          if [[ $(cut -d '-' -f1 <<< $current_release)  =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            version="$(cut -d '-' -f1 <<< $current_release)"
+            echo "Previous release: $version"
+            version="$version-$(date +'%Y%m%d')"
+          else
+            echo "Issue with current tag: $current_release"
+            return -1
+          fi
+          sbt "set version in ThisBuild := \"$(cut -c2- <<< $version)\"" docker:publish -Ddocker.repo=registry-write.opensource.zalan.do/machina
+          echo "Published an updated release version: $version"

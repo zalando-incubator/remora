@@ -1,4 +1,4 @@
-# Remora [![Build Status](https://travis-ci.org/zalando-incubator/remora.svg?branch=master)](https://travis-ci.org/zalando-incubator/remora)
+# Remora
 
 ![Grafana Graph](https://raw.githubusercontent.com/imduffy15/remora-fetcher/master/img/grafana.png)
 
@@ -505,7 +505,7 @@ This way, a docker container running Remora will be able to communicate with a D
 
 ### Build
 
-Create docker image locally. The image will be built to `remora:<TAG-GITCOMMIT>` and `latest`
+Create docker image locally. The image will be built to `remora:0.1.0-SNAPSHOT` by default.
 
 ```bash
 $ sbt docker:publishLocal
