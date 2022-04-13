@@ -1,3 +1,4 @@
+X-Zalando-Team: buffalo
 approvals:
   groups:
     zalando:
@@ -6,4 +7,3 @@ approvals:
         orgs:
           - "zalando"
 
-X-Zalando-Team: machina
