@@ -6,7 +6,7 @@ lazy val commonSettings = Seq(
 
 lazy val dockerSettings = Seq(
   daemonUser := "root",
-  dockerUpdateLatest := true,
+  dockerUpdateLatest := false,
   dockerBaseImage := "registry.opensource.zalan.do/library/openjdk-8:latest",
   dockerExposedPorts := Seq(9000),
   dockerExposedVolumes := Seq("/opt/docker/logs"),
@@ -14,16 +14,10 @@ lazy val dockerSettings = Seq(
   maintainer := "team-buffalo@zalando.ie"
 )
 
-lazy val gitSettings = Seq(
-  git.useGitDescribe := true
-)
-
 lazy val root = (project in file("."))
   .settings(commonSettings)
   .settings(dockerSettings)
-  .settings(gitSettings)
   .enablePlugins(
-    GitVersioning,
     JavaServerAppPackaging
   )
 

@@ -30,9 +30,9 @@ services:
 
   remora:
     # Built locally
-    image: remora
-#    latest from repo
-#    image: registry.opensource.zalan.do/machina/remora
+    image: remora:0.1.0-SNAPSHOT
+    # From repo
+    #image: registry.opensource.zalan.do/machina/remora:1.3.0
     depends_on:
       - kafka
     environment:
