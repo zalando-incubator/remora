@@ -3,7 +3,7 @@
  - Added support for Kafka 3.1.0.
  - Breaking change introduced for metrics exported to AWS CloudWatch.
  - Upgraded Docker base image to use Java 17.
- - Upgraded all dependencies caused by migration from SBT (v0.13 to v1.6), and Scala (v2.10 to v2.13).
+ - Upgraded all dependencies caused by migration from SBT (v0.13 to v1.6), and Scala (v2.11 to v2.13).
  - Moved team name (ownership) to 'Buffalo' in Docker / Pierone. Images are now published to `registry-write.opensource.zalan.do/buffalo` instead of `registry-write.opensource.zalan.do/machina`.
 
 # v1.3.0
