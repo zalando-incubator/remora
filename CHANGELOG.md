@@ -1,3 +1,7 @@
+# v2.0.0
+
+- Moved team name (ownership) to 'Buffalo' in Docker / Pierone. Images are now published to `registry-write.opensource.zalan.do/buffalo` instead of `registry-write.opensource.zalan.do/machina`.
+
 # v1.3.0
 
 - Added support for filtering CloudWatch metrics.
