@@ -26,14 +26,14 @@ We created Remora after spending some time using Linkedin's [burrow](https://git
 
 ### Dependencies
 
-The latest release of [Remora](https://github.com/zalando-incubator/remora) supports [Apache Kafka](http://kafka.apache.org/) 3.1.0
+The latest release of [Remora](https://github.com/zalando-incubator/remora) supports [Apache Kafka](http://kafka.apache.org/) 3.1.0 and earlier.
 
 To find the latest releases, please see the following examples:
 
 ```
-$ curl https://registry.opensource.zalan.do/teams/machina/artifacts/buffalo/tags | jq ".[] | .name"
+$ curl https://registry.opensource.zalan.do/teams/buffalo/artifacts/remora/tags | jq ".[] | .name"
 
-$ pierone latest machina buffalo --url registry.opensource.zalan.do # requires `$ pip3 install stups-pierone`
+$ pierone latest buffalo remora --url registry.opensource.zalan.do # requires `$ pip3 install stups-pierone`
 ```
 
 ### Running it

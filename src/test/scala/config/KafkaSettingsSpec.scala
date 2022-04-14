@@ -13,7 +13,7 @@ class KafkaSettingsSpec extends AnyFlatSpec with Matchers {
 
     settings.address should ===("localhost:9092")
     settings.commandConfig should ===("test.properties")
-    settings.adminClientProps.get(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG).asInstanceOf[String] should ===("localhost:9092")
+    settings.adminClientProps.get(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG) should ===("localhost:9092")
   }
 
   it should "correctly parse the correct security protocol if provided in AdminClient properties" in {
