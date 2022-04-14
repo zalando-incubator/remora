@@ -1,7 +1,6 @@
 package reporter
 
 import com.codahale.metrics.MetricRegistry
-import com.amazonaws.services.cloudwatch.{AmazonCloudWatchAsync, AmazonCloudWatchAsyncClientBuilder}
 import config.CloudWatch
 import io.github.azagniotov.metrics.reporter.cloudwatch.CloudWatchReporter
 import filter.CloudWatchMetricFilter
