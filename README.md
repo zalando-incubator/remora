@@ -36,9 +36,9 @@ The latest release of [Remora](https://github.com/zalando-incubator/remora) supp
 
 To find the latest releases, please see the following examples
 
-`$ curl https://registry.opensource.zalan.do/teams/machina/artifacts/remora/tags | jq ".[] | .name"`
+`$ curl https://registry.opensource.zalan.do/teams/machina/artifacts/buffalo/tags | jq ".[] | .name"`
 
-`$ pierone latest machina remora --url registry.opensource.zalan.do` (Which would require a `$ pip3 install stups-pierone`)
+`$ pierone latest machina buffalo --url registry.opensource.zalan.do` (Which would require a `$ pip3 install stups-pierone`)
 
 ### Running it
 
@@ -47,13 +47,13 @@ Images for all versions are available on [Zalando opensource pierone](http://reg
 They can be used as follows:
 
 ```bash
-docker run -it --rm -p 9000:9000 -e KAFKA_ENDPOINT=127.0.0.1:9092 registry.opensource.zalan.do/machina/remora
+docker run -it --rm -p 9000:9000 -e KAFKA_ENDPOINT=127.0.0.1:9092 registry.opensource.zalan.do/buffalo/remora
 ```
 
 Run it with different log level:
 
 ```bash
-docker run -it --rm -p 9000:9000 -e KAFKA_ENDPOINT=127.0.0.1:9092 -e 'JAVA_OPTS=-Dlogback-root-level=INFO' registry.opensource.zalan.do/machina/remora
+docker run -it --rm -p 9000:9000 -e KAFKA_ENDPOINT=127.0.0.1:9092 -e 'JAVA_OPTS=-Dlogback-root-level=INFO' registry.opensource.zalan.do/buffalo/remora
 ```
 
 For further examples see the [docker-compose.yml](basic-example/docker-compose.yml)

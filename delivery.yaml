@@ -47,7 +47,7 @@ pipeline:
             echo "Issue with current tag: $current_release"
             return -1
           fi
-          sbt "set version in ThisBuild := \"$(cut -c2- <<< $version)\"" docker:publish -Ddocker.repo=registry-write.opensource.zalan.do/machina
+          sbt "set version in ThisBuild := \"$(cut -c2- <<< $version)\"" docker:publish -Ddocker.repo=registry-write.opensource.zalan.do/buffalo
           echo "Published a new release version: $version"
           echo "Tagging new version: $version"
           git gh-tag $version
@@ -78,7 +78,7 @@ pipeline:
             echo "Issue with current tag: $current_release"
             return -1
           fi
-          sbt "set version in ThisBuild := \"$(cut -c2- <<< $version)\"" docker:publish -Ddocker.repo=registry-write.opensource.zalan.do/machina
+          sbt "set version in ThisBuild := \"$(cut -c2- <<< $version)\"" docker:publish -Ddocker.repo=registry-write.opensource.zalan.do/buffalo
           echo "Published a new release version: $version"
           echo "Tagging new version: $version"
           git gh-tag $version
@@ -110,7 +110,7 @@ pipeline:
             echo "Issue with current tag: $current_release"
             return -1
           fi
-          sbt "set version in ThisBuild := \"$(cut -c2- <<< $version)\"" docker:publish -Ddocker.repo=registry-write.opensource.zalan.do/machina
+          sbt "set version in ThisBuild := \"$(cut -c2- <<< $version)\"" docker:publish -Ddocker.repo=registry-write.opensource.zalan.do/buffalo
           echo "Published a new release version: $version"
           echo "Tagging new version: $version"
           git gh-tag $version
@@ -138,5 +138,5 @@ pipeline:
             echo "Issue with current tag: $current_release"
             return -1
           fi
-          sbt "set version in ThisBuild := \"$(cut -c2- <<< $version)\"" docker:publish -Ddocker.repo=registry-write.opensource.zalan.do/machina
+          sbt "set version in ThisBuild := \"$(cut -c2- <<< $version)\"" docker:publish -Ddocker.repo=registry-write.opensource.zalan.do/buffalo
           echo "Published an updated release version: $version"

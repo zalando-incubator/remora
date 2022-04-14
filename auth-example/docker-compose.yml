@@ -38,7 +38,7 @@ services:
     # Built locally
     image: remora:0.1.0-SNAPSHOT
     # From Docker
-    #image: registry.opensource.zalan.do/machina/remora:1.3.0
+    #image: registry.opensource.zalan.do/buffalo/remora:2.0.0
     depends_on:
       - kafka
     volumes:
