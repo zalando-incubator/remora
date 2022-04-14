@@ -62,7 +62,7 @@ For further examples see the [docker-compose.yml](basic-example/docker-compose.y
 docker-compose -f basic-example/docker-compose.yml up
 ```
 
-Run remora in IDE with kafka and zookeeper run by docker-compose 
+Run remora in IDE with kafka and zookeeper run by docker-compose. Note you must set `-e KAFKA_ENDPOINT="kafka:9094"` and `--network basic-example_default` for Remora to work with Kafka from docker-compose.
 
 ```bash
 docker-compose -f basic-example/docker-compose.yml up --scale remora=0
@@ -71,7 +71,7 @@ docker-compose -f basic-example/docker-compose.yml up --scale remora=0
 Remora is stateless, so test the scale of the API
 
 ```bash
-docker-compose -f scale-example/docker-compose.yml up --scale remora=3
+docker-compose -f basic-example/docker-compose.yml up --scale remora=3
 ```
 
 For examples with broker authentication see the [docker-compose.yml](auth-example/docker-compose.yml)
