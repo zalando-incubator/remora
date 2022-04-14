@@ -8,18 +8,18 @@
 
 # v1.3.0
 
-- Added support for filtering CloudWatch metrics.
-- Added support for configuring AdminClient in KafkaSettings.
-- Added support for specifying root log level via Java options.
+ - Added support for filtering CloudWatch metrics.
+ - Added support for configuring AdminClient in KafkaSettings.
+ - Added support for specifying root log level via Java options.
 
 # v1.2.0
 
-- Added support for Kafka 2.2.0.
-- Improved DataDog metric name format (reducing redundancy with metric tags).
+ - Added support for Kafka 2.2.0.
+ - Improved DataDog metric name format (reducing redundancy with metric tags).
 
 # v1.1.0
 
-- Added improved application health checks.
+ - Added improved application health checks.
 
 # v1.0.7
 
@@ -60,4 +60,8 @@
 
 # v0.1.0
 
+<<<<<<< HEAD
  - Initial release for Kafka 0.10.0.1.
+=======
+- Initial release for Kafka 0.10.0.1.
+>>>>>>> master
