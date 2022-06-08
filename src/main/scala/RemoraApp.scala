@@ -1,22 +1,13 @@
-import java.io.IOException
-import java.net.ConnectException
-import java.util.concurrent.{TimeUnit, TimeoutException}
 import akka.actor.ActorSystem
-import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}
-import com.amazonaws.services.cloudwatch.{AmazonCloudWatchAsync, AmazonCloudWatchAsyncClientBuilder}
-import com.blacklocus.metrics.CloudWatchReporterBuilder
 import com.codahale.metrics.jvm.{GarbageCollectorMetricSet, MemoryUsageGaugeSet, ThreadStatesGaugeSet}
 import com.typesafe.scalalogging.LazyLogging
 import config.{KafkaSettings, MetricsSettings}
 import kafka.admin.RemoraKafkaConsumerGroupService
 import reporter.{RemoraCloudWatchReporter, RemoraDatadogReporter}
-import filter.CloudWatchMetricFilter
 
 import scala.concurrent.duration._
-import scala.util.control.NonFatal
-import scala.util.matching.Regex
 
-object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented with LazyLogging {
+object RemoraApp extends App with nl.grons.metrics4.scala.DefaultInstrumented with LazyLogging {
 
   private val actorSystemName: String = "remora"
   implicit val actorSystem = ActorSystem(actorSystemName)
@@ -24,16 +15,6 @@ object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented wit
   metricRegistry.registerAll(new GarbageCollectorMetricSet)
   metricRegistry.registerAll(new MemoryUsageGaugeSet)
   metricRegistry.registerAll(new ThreadStatesGaugeSet)
-
-  lazy val decider: Supervision.Decider = {
-    case _: IOException | _: ConnectException | _: TimeoutException => Supervision.Restart
-    case NonFatal(err: Throwable) =>
-      actorSystem.log.error(err, "Unhandled Exception in Stream: {}", err.getMessage)
-      Supervision.Stop
-  }
-
-  implicit val materializer = ActorMaterializer(
-    ActorMaterializerSettings(actorSystem).withSupervisionStrategy(decider))(actorSystem)
 
   implicit val executionContext = actorSystem.dispatchers.lookup("kafka-consumer-dispatcher")
   val kafkaSettings = KafkaSettings(actorSystem.settings.config)
@@ -48,7 +29,7 @@ object RemoraApp extends App with nl.grons.metrics.scala.DefaultInstrumented wit
     val exportConsumerMetricsToRegistryActor =
       actorSystem.actorOf(ExportConsumerMetricsToRegistryActor.props(kafkaClientActor),
         name = "export-consumer-metrics-actor")
-    actorSystem.scheduler.schedule(0 second, metricsSettings.registryOptions.intervalSeconds second, exportConsumerMetricsToRegistryActor, "export")
+    actorSystem.scheduler.scheduleAtFixedRate(0.seconds, metricsSettings.registryOptions.intervalSeconds.seconds, exportConsumerMetricsToRegistryActor, "export")
   }
 
   if (metricsSettings.cloudWatch.enabled) {

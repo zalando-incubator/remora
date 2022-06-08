@@ -3,7 +3,7 @@ version: "2017-09-20"
 dependencies:
   - id: base-image
     type: docker
-    ref: registry.opensource.zalan.do/library/openjdk-8
+    ref: registry.opensource.zalan.do/library/eclipse-temurin-17-jdk
 
 pipeline:
   - id: compile-test
@@ -13,7 +13,7 @@ pipeline:
       branch: master
     vm_config:
       type: linux
-      image: cdp-runtime/jdk8-sbt
+      image: cdp-runtime/jdk17-sbt
       size: large
     commands:
       - desc: Compile and test application
@@ -29,7 +29,7 @@ pipeline:
     requires_human_approval: true
     vm_config:
       type: linux
-      image: cdp-runtime/jdk8-sbt
+      image: cdp-runtime/jdk17-sbt
       size: large
     commands:
       - desc: Build and push docker image
@@ -61,7 +61,7 @@ pipeline:
     requires_human_approval: true
     vm_config:
       type: linux
-      image: cdp-runtime/jdk8-sbt
+      image: cdp-runtime/jdk17-sbt
       size: large
     commands:
       - desc: Build and push docker image
@@ -92,7 +92,7 @@ pipeline:
     requires_human_approval: true
     vm_config:
       type: linux
-      image: cdp-runtime/jdk8-sbt
+      image: cdp-runtime/jdk17-sbt
       size: large
     commands:
       - desc: Build and push docker image
@@ -123,7 +123,7 @@ pipeline:
       triggered_by_dependency: base-image
     vm_config:
       type: linux
-      image: cdp-runtime/jdk8-sbt
+      image: cdp-runtime/jdk17-sbt
       size: large
     commands:
       - desc: Build and push docker image

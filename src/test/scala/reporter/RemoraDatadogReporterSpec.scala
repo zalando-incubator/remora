@@ -1,13 +1,15 @@
 package reporter
 
-
 import com.codahale.metrics.{Metric, MetricFilter, MetricRegistry}
 import config.DataDog
 import org.coursera.metrics.datadog.MetricNameFormatter
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.{FlatSpec, Matchers, PrivateMethodTester}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.PrivateMethodTester
 
-class RemoraDatadogReporterSpec extends FlatSpec with Matchers with PrivateMethodTester with MockFactory {
+
+class RemoraDatadogReporterSpec extends AnyFlatSpec with Matchers with PrivateMethodTester with MockFactory {
 
   private val metricRegistry: MetricRegistry = new MetricRegistry
   private val metric: Metric = mock[Metric]
@@ -66,11 +68,11 @@ class RemoraDatadogReporterSpec extends FlatSpec with Matchers with PrivateMetho
   private def buildMetricFilter(kafkaConsumerList: List[String], removeTags: Boolean = false): MetricFilter = {
     val config = DataDog(enabled = true, "test", 1, "localhost", 8125, kafkaConsumerList, removeTags)
     val reporter = new RemoraDatadogReporter(metricRegistry, config)
-    reporter invokePrivate PrivateMethod[MetricFilter]('kafkaConsumerGroupFilter)()
+    reporter invokePrivate PrivateMethod[MetricFilter](Symbol("kafkaConsumerGroupFilter"))()
   }
 
   private def getMetricNameFormatter(config: DataDog): MetricNameFormatter = {
     val reporter = new RemoraDatadogReporter(metricRegistry, config)
-    reporter invokePrivate PrivateMethod[MetricNameFormatter]('metricNameFormatter)(config.removeTagsFromMetricName)
+    reporter invokePrivate PrivateMethod[MetricNameFormatter](Symbol("metricNameFormatter"))(config.removeTagsFromMetricName)
   }
 }

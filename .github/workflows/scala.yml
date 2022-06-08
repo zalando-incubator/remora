@@ -11,12 +11,17 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+
     steps:
     - uses: actions/checkout@v2
+    - uses: coursier/cache-action@v6
     - name: Setup Scala
-      uses: olafurpg/setup-scala@v11
+      uses: coursier/setup-action@v1
       with:
-        java-version: "adopt@1.8"
+        jvm: openjdk:17
+        apps: sbtn
 
     - name: Run tests
       run: sbt test

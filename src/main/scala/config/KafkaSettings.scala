@@ -1,9 +1,10 @@
 package config
 
-import scala.collection.JavaConverters._
 import com.typesafe.config.Config
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.admin.AdminClient
+
+import scala.jdk.CollectionConverters._
 
 case class KafkaSettings(address: String, commandConfig: String, adminClientProps: java.util.Properties) {
   lazy val adminClient: AdminClient = AdminClient.create(adminClientProps)

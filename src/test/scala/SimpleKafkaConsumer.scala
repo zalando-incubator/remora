@@ -1,10 +1,8 @@
-import java.util.Properties
-
-import com.fasterxml.jackson.databind.KeyDeserializer
 import org.apache.kafka.clients.consumer.{ConsumerRecords, KafkaConsumer}
 import org.apache.kafka.common.serialization.Deserializer
-import net.manub.embeddedkafka.Codecs.stringDeserializer
-import net.manub.embeddedkafka.ConsumerExtensions._
+
+import java.time.Duration
+import java.util.Properties
 
 class SimpleKafkaConsumer[K,V](consumerProps : Properties,
                                topic : String,
@@ -17,16 +15,15 @@ class SimpleKafkaConsumer[K,V](consumerProps : Properties,
 
   private val consumer = new KafkaConsumer[K, V](consumerProps, keyDeserializer, valueDeserializer)
 
-
   private val thread = new Thread {
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
 
-    override def run: Unit = {
+    override def run(): Unit = {
       consumer.subscribe(List(topic).asJava)
       consumer.partitionsFor(topic)
 
       while (running) {
-        val record: ConsumerRecords[K, V] = consumer.poll(poll)
+        val record: ConsumerRecords[K, V] = consumer.poll(Duration.ofMillis(poll))
         function(record)
       }
     }

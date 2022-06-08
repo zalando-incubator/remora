@@ -7,7 +7,6 @@ import com.codahale.metrics.MetricRegistry
 import MetricUtils.{findAndRegisterMeter, findAndRegisterTimer}
 
 import scala.util.{Failure, Success}
-import scala.util.control.NonFatal
 
 private[metrics] object MetricsDirectivesSupport {
 

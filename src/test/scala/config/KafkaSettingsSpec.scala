@@ -3,9 +3,10 @@ package config
 import com.typesafe.config.ConfigFactory
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.admin.AdminClientConfig
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.flatspec.AnyFlatSpec
 
-class KafkaSettingsSpec extends FlatSpec with Matchers {
+class KafkaSettingsSpec extends AnyFlatSpec with Matchers {
   "KafkaSettingsSpec" should "correctly inject the correct endpoint in AdminClient properties" in {
     val conf = ConfigFactory.load("kafka-without-admin-client.conf")
     val settings = KafkaSettings(conf)

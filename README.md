@@ -18,7 +18,7 @@ We created Remora after spending some time using Linkedin's [burrow](https://git
 
 > We rely on Kafka for streaming DB change events on to other teams within our organisation. Remora greatly aids us in ensuring our Kafka and Kafka Connect components are functioning correctly by monitoring both the number of events been produced, and any lag present on a per consumer basis. It is proving an excellent tool in providing data which we use to trigger real time alerts ~ Team Warhol @ Zalando Dublin
 
-> We use Kafka and Kafka Streaming to orchestrate the different components of our text processing pipeline. Through data provided by Remora, we monitor lags in differnet topics as part of our monitoring dashboard and alerting system. Remora makes it easier for us to quickly identify and respond to bottlenecks and problems. ~ Team Sapphire @ Zalando Dublin
+> We use Kafka and Kafka Streaming to orchestrate the different components of our text processing pipeline. Through data provided by Remora, we monitor lags in different topics as part of our monitoring dashboard and alerting system. Remora makes it easier for us to quickly identify and respond to bottlenecks and problems. ~ Team Sapphire @ Zalando Dublin
 
 > We are using Mirror Maker to replicate data between two Kafka brokers and Remora has been a great help to monitor the replication in real time. The metrics exposed by Remora are pushed to Datadog, on top of which we build dashboards and triggers to help us react in case of failure. ~ Sqooba Switzerland
 
@@ -26,19 +26,15 @@ We created Remora after spending some time using Linkedin's [burrow](https://git
 
 ### Dependencies
 
-The latest release of [Remora](https://github.com/zalando-incubator/remora) supports [Apache Kafka](http://kafka.apache.org/) 0.10.2.1, 1.0.0, 1.1.1 and 2X
+The latest release of [Remora](https://github.com/zalando-incubator/remora) supports [Apache Kafka](http://kafka.apache.org/) 3.1.0 and earlier.
 
-* For [Apache Kafka](http://kafka.apache.org/) 0.10.0.1 please see the [v0.1.0 release](https://github.com/zalando-incubator/remora/releases/tag/v0.1.0).
-* For [Apache Kafka](http://kafka.apache.org/) 0.10.2.1 please see the [v0.2.0 release](https://github.com/zalando-incubator/remora/releases/tag/v0.2.0).
-* For [Apache Kafka](http://kafka.apache.org/) 1.0.0 please see the [v1.0.5 release](https://github.com/zalando-incubator/remora/releases/tag/v1.0.5).
-* For [Apache Kafka](http://kafka.apache.org/) 1.1.1 please see the [v1.0.6 release](https://github.com/zalando-incubator/remora/releases/tag/v1.0.6).
-* For [Apache Kafka](http://kafka.apache.org/) 2X please see the [v1.0.7 release](https://github.com/zalando-incubator/remora/releases/tag/v1.0.7).
+To find the latest releases, please see the following examples:
 
-To find the latest releases, please see the following examples
+```
+$ curl https://registry.opensource.zalan.do/teams/buffalo/artifacts/remora/tags | jq ".[] | .name"
 
-`$ curl https://registry.opensource.zalan.do/teams/machina/artifacts/buffalo/tags | jq ".[] | .name"`
-
-`$ pierone latest machina buffalo --url registry.opensource.zalan.do` (Which would require a `$ pip3 install stups-pierone`)
+$ pierone latest buffalo remora --url registry.opensource.zalan.do # requires `$ pip3 install stups-pierone`
+```
 
 ### Running it
 
@@ -500,7 +496,7 @@ This way, a docker container running Remora will be able to communicate with a D
 
 ### Prerequisites
 
- - Scala 2.11.8
+ - Scala
  - SBT
 
 ### Build
