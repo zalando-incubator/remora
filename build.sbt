@@ -38,7 +38,7 @@ libraryDependencies ++= Seq(
   "io.dropwizard.metrics" % "metrics-jvm" % "4.2.9",
   "io.github.azagniotov" % "dropwizard-metrics-cloudwatch" % "2.0.8",
   "org.coursera" % "dropwizard-metrics-datadog" % "1.1.14",
-  "software.amazon.awssdk" % "aws-sdk-java" % "2.17.166",
+  "software.amazon.awssdk" % "cloudwatch" % "2.17.166",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
   "com.typesafe.akka" %% "akka-actor" % "2.6.19",
   "com.typesafe.akka" %% "akka-http" % "10.2.9",
