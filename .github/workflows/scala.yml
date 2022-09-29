@@ -18,10 +18,11 @@ jobs:
     - uses: actions/checkout@v2
     - uses: coursier/cache-action@v6
     - name: Setup Scala
-      uses: coursier/setup-action@v1
+      uses: actions/setup-java@v3
       with:
-        jvm: openjdk:17
-        apps: sbtn
+        distribution: 'temurin'
+        java-version: '17'
+        cache: 'sbt'
 
     - name: Run tests
       run: sbt test
